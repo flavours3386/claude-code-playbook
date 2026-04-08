@@ -23,7 +23,7 @@ index.html
 │   ├── #skills ────────── 스킬 가이드
 │   ├── #workflows ─────── 일상 워크플로우
 │   ├── #troubleshooting ─ 트러블슈팅
-│   └── #quick-start ───── 빠른 시작 스크립트
+│   └── #quick-start ───── 빠른 시작 가이드 (3단계 + 올인원 프롬프트)
 ├── <footer>
 └── <script> ── 인터랙션 로직 (탭 전환, 복사, 다크모드, 체크리스트)
 ```
@@ -39,14 +39,15 @@ index.html
 ## 배포
 
 ```
-Vercel Static Deployment
+Vercel Static Deployment → https://claude-code-playbook-rosy.vercel.app
+GitHub: flavours3386/claude-code-playbook (자동 배포 연동)
 ├── vercel.json (라우팅, 헤더)
 └── index.html (엔트리포인트)
 ```
 
 ## 규모
 
-- 1,859줄 / 117KB (단일 파일)
+- 2,029줄 / 129KB (단일 파일)
 - 12개 섹션, 24개 체크리스트 항목
 - 인터랙티브 컴포넌트 6종 (사이드바, OS탭, 코드복사, 체크리스트, 다크모드, 접이식패널)
 

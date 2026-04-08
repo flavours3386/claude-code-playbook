@@ -20,7 +20,7 @@
 | border | #E7E5E4 | #44403C | 구분선, 카드 보더 |
 | text-primary | #1C1917 | #FAFAF9 | 제목, 본문 |
 | text-secondary | #78716C | #A8A29E | 부가 설명 |
-| text-tertiary | #A8A29E | #78716C | 비활성 텍스트 |
+| text-tertiary | #787270 | #6B6966 | 비활성 텍스트 (WCAG AA 대비 보정) |
 
 ### Semantic
 | 토큰 | 색상 | 배경 | 용도 |

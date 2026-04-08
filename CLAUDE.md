@@ -6,7 +6,8 @@
 
 - **목적**: 팀원이 Mac/Windows에서 동일한 Claude Code 환경을 구축할 수 있는 인터랙티브 가이드
 - **타입**: 클라이언트 전용 (정적 HTML)
-- **배포**: Vercel 정적 배포
+- **배포**: Vercel 정적 배포 (https://claude-code-playbook-rosy.vercel.app)
+- **GitHub**: https://github.com/flavours3386/claude-code-playbook
 - **생성일**: 2026-04-08
 
 ## 기술 스택
@@ -37,7 +38,7 @@ claude-code-playbook/
 ├── AGENTS.md              # 문서 목차 + 핵심 원칙
 ├── ARCHITECTURE.md        # 아키텍처 문서
 ├── .impeccable.md         # 디자인 컨텍스트 (impeccable)
-├── index.html             # 메인 플레이북 (1,859줄, 117KB)
+├── index.html             # 메인 플레이북 (2,029줄, 130KB)
 ├── vercel.json            # Vercel 배포 설정
 ├── .gitignore
 └── docs/
@@ -86,3 +87,6 @@ claude-code-playbook/
 - 2026-04-08: index.html 플레이북 본문 작성 (12섹션, 24 체크리스트, 6 인터랙티브 컴포넌트)
 - 2026-04-08: Critic 리뷰 P1 수정 (접근성, 체크리스트 추가, aria-hidden)
 - 2026-04-08: CLAUDE.md 전문 반영, 커스텀 스킬 3개 추가
+- 2026-04-08: Content Auditor 검증 수정 (매직 키워드 4개, CLAUDE.md 6곳 복원)
+- 2026-04-08: 프롬프트 기반 셋업 구조 도입 (섹션 4-7, 12)
+- 2026-04-08: GitHub 레포 생성 + Vercel 프로덕션 배포

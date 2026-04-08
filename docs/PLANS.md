@@ -1,15 +1,16 @@
 # Plans - claude-code-playbook
 
-## v1.0 (현재)
+## v1.0 (완료)
 
 - [x] 프로젝트 구조 셋업
 - [x] .impeccable.md 디자인 시스템 구성
 - [x] index.html 플레이북 본문 작성 (12섹션)
 - [x] Critic 리뷰 및 P1 수정 반영
 - [x] CLAUDE.md 전문 반영 + 커스텀 스킬 추가
-- [ ] 검증 에이전트 팀 최종 검증
-- [ ] GitHub 레포 생성 + 커밋
-- [ ] Vercel 배포
+- [x] Content Auditor 검증 + 수정 (매직 키워드, CLAUDE.md 복원)
+- [x] 프롬프트 기반 셋업 구조 도입 (섹션 4-7, 12)
+- [x] GitHub 레포 생성 + 커밋
+- [x] Vercel 프로덕션 배포
 - [ ] 팀 내 배포 및 피드백 수집
 
 ## 향후 계획
