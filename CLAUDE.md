@@ -38,7 +38,7 @@ claude-code-playbook/
 ├── AGENTS.md              # 문서 목차 + 핵심 원칙
 ├── ARCHITECTURE.md        # 아키텍처 문서
 ├── .impeccable.md         # 디자인 컨텍스트 (impeccable)
-├── index.html             # 메인 플레이북 (2,029줄, 130KB)
+├── index.html             # 메인 플레이북 (2,404줄, 164KB)
 ├── vercel.json            # Vercel 배포 설정
 ├── .gitignore
 ├── skills/
@@ -94,3 +94,5 @@ claude-code-playbook/
 - 2026-04-08: Content Auditor 검증 수정 (매직 키워드 4개, CLAUDE.md 6곳 복원)
 - 2026-04-08: 프롬프트 기반 셋업 구조 도입 (섹션 4-7, 12)
 - 2026-04-08: GitHub 레포 생성 + Vercel 프로덕션 배포
+- 2026-04-08: 커스텀 스킬 3개 skills/ 디렉토리에 포함
+- 2026-04-08: 플러그인 섹션 상세화 (19개 플러그인 기능/스킬 접이식 카드)
