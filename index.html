@@ -1,0 +1,2029 @@
+<!DOCTYPE html>
+<html lang="ko" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Claude Code 팀 플레이북</title>
+  <meta name="description" content="Mac/Windows에서 동일한 Claude Code 환경을 30분 안에 구축하세요" />
+
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Pretendard Variable', 'Pretendard', 'system-ui', '-apple-system', 'sans-serif'],
+            mono: ['JetBrains Mono', 'ui-monospace', 'SF Mono', 'Cascadia Code', 'monospace'],
+          },
+        },
+      },
+    };
+  </script>
+  <style>
+    :root {
+      --primary: #D97757;
+      --primary-hover: #C4684A;
+      --primary-light: #FEF3EE;
+      --bg: #FAFAF9;
+      --surface: #FFFFFF;
+      --border: #E7E5E4;
+      --border-subtle: #F5F5F4;
+      --text-primary: #1C1917;
+      --text-secondary: #78716C;
+      --text-tertiary: #787270;
+      --success: #16A34A;
+      --success-bg: #F0FDF4;
+      --warning: #CA8A04;
+      --warning-bg: #FEFCE8;
+      --danger: #DC2626;
+      --danger-bg: #FEF2F2;
+      --info: #2563EB;
+      --info-bg: #EFF6FF;
+      --code-bg: #1C1917;
+      --code-text: #E7E5E4;
+    }
+    .dark {
+      --bg: #1C1917;
+      --surface: #292524;
+      --border: #44403C;
+      --border-subtle: #292524;
+      --text-primary: #FAFAF9;
+      --text-secondary: #A8A29E;
+      --text-tertiary: #6B6966;
+      --primary-light: rgba(217,119,87,0.12);
+      --success-bg: rgba(22,163,74,0.1);
+      --warning-bg: rgba(202,138,4,0.1);
+      --danger-bg: rgba(220,38,38,0.1);
+      --info-bg: rgba(37,99,235,0.1);
+      --code-bg: #0C0A09;
+      --code-text: #D6D3D1;
+    }
+    * { box-sizing: border-box; }
+    html { font-family: 'Pretendard Variable', Pretendard, system-ui, -apple-system, sans-serif; }
+    body { background-color: var(--bg); color: var(--text-primary); transition: background-color 0.2s, color 0.2s; font-size: 1rem; line-height: 1.75rem; }
+    #sidebar { width: 280px; background-color: var(--surface); border-right: 1px solid var(--border); transition: transform 0.3s ease, background-color 0.2s; }
+    @media (max-width: 1023px) {
+      #sidebar { position: fixed; top: 0; left: 0; height: 100dvh; z-index: 50; transform: translateX(-100%); box-shadow: 4px 0 24px rgba(0,0,0,0.12); }
+      #sidebar.open { transform: translateX(0); }
+    }
+    #sidebar-nav::-webkit-scrollbar { width: 4px; }
+    #sidebar-nav::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+    .nav-link { display: block; padding: 6px 12px; border-radius: 8px; font-size: 0.875rem; color: var(--text-secondary); text-decoration: none; transition: color 0.15s, background-color 0.15s; }
+    .nav-link:hover { color: var(--text-primary); background-color: var(--border-subtle); }
+    .nav-link.active { color: var(--primary); background-color: var(--primary-light); font-weight: 600; }
+    .code-block { background-color: var(--code-bg); color: var(--code-text); border-radius: 8px; overflow: hidden; font-family: 'JetBrains Mono', monospace; font-size: 0.8125rem; line-height: 1.6; }
+    .code-block-header { display: flex; align-items: center; justify-content: space-between; padding: 8px 16px; background: rgba(255,255,255,0.06); border-bottom: 1px solid rgba(255,255,255,0.08); }
+    .code-block-lang { font-size: 0.75rem; color: #A8A29E; font-weight: 500; letter-spacing: 0.05em; text-transform: uppercase; }
+    .code-copy-btn { display: flex; align-items: center; gap: 4px; font-size: 0.75rem; color: #78716C; background: transparent; border: none; cursor: pointer; padding: 4px 8px; border-radius: 4px; transition: color 0.15s, background-color 0.15s; font-family: inherit; }
+    .code-copy-btn:hover { color: #A8A29E; background: rgba(255,255,255,0.06); }
+    .code-body { padding: 16px; overflow-x: auto; white-space: pre; }
+    .checklist-item { display: flex; align-items: flex-start; gap: 10px; padding: 8px 0; cursor: pointer; }
+    .checklist-cb { width: 18px; height: 18px; min-width: 18px; border: 2px solid var(--border); border-radius: 4px; display: flex; align-items: center; justify-content: center; transition: border-color 0.15s, background-color 0.15s; margin-top: 2px; }
+    .checklist-item.done .checklist-cb { background-color: var(--primary); border-color: var(--primary); }
+    .checklist-item.done .checklist-label { text-decoration: line-through; color: var(--text-tertiary); }
+    .progress-bar-fill { height: 100%; background-color: var(--primary); border-radius: 4px; transition: width 0.4s ease; }
+    .os-tab-btn { padding: 8px 20px; font-size: 0.875rem; font-weight: 500; color: var(--text-secondary); border-bottom: 2px solid transparent; background: transparent; border-top: none; border-left: none; border-right: none; cursor: pointer; transition: color 0.15s, border-color 0.15s; font-family: inherit; }
+    .os-tab-btn.active { color: var(--primary); border-bottom-color: var(--primary); font-weight: 600; }
+    .os-tab-btn:hover:not(.active) { color: var(--text-primary); }
+    .os-panel { display: none; }
+    .os-panel.active { display: block; }
+    .callout { display: flex; gap: 12px; padding: 14px 16px; border-radius: 8px; border-left: 4px solid; font-size: 0.9rem; }
+    .callout-tip { border-color: var(--success); background-color: var(--success-bg); }
+    .callout-warning { border-color: var(--warning); background-color: var(--warning-bg); }
+    .callout-danger { border-color: var(--danger); background-color: var(--danger-bg); }
+    .callout-info { border-color: var(--info); background-color: var(--info-bg); }
+    .callout-icon { font-size: 1.1em; flex-shrink: 0; margin-top: 1px; }
+    .section-divider { border: none; border-top: 1px solid var(--border); margin: 0; }
+    details > summary { list-style: none; cursor: pointer; display: flex; align-items: center; justify-content: space-between; padding: 14px 16px; border-radius: 8px; transition: background-color 0.15s; user-select: none; }
+    details > summary:hover { background-color: var(--border-subtle); }
+    details > summary::-webkit-details-marker { display: none; }
+    details[open] > summary { border-bottom-left-radius: 0; border-bottom-right-radius: 0; }
+    .details-chevron { transition: transform 0.2s; flex-shrink: 0; }
+    details[open] .details-chevron { transform: rotate(180deg); }
+    .data-table { width: 100%; border-collapse: collapse; font-size: 0.875rem; }
+    .data-table th { text-align: left; padding: 10px 14px; font-weight: 600; background-color: var(--border-subtle); color: var(--text-secondary); font-size: 0.8125rem; text-transform: uppercase; letter-spacing: 0.04em; }
+    .data-table td { padding: 10px 14px; border-top: 1px solid var(--border); color: var(--text-primary); }
+    .data-table tr:hover td { background-color: var(--border-subtle); }
+    .card { background-color: var(--surface); border: 1px solid var(--border); border-radius: 12px; transition: background-color 0.2s, border-color 0.2s; }
+    .section-title { font-size: 1.5rem; font-weight: 700; line-height: 2rem; color: var(--text-primary); display: flex; align-items: center; gap: 10px; }
+    .section-badge { width: 32px; height: 32px; background-color: var(--primary-light); color: var(--primary); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 0.875rem; font-weight: 700; flex-shrink: 0; }
+    #theme-toggle { width: 40px; height: 24px; background: var(--border); border-radius: 12px; position: relative; cursor: pointer; border: none; transition: background-color 0.2s; flex-shrink: 0; }
+    #theme-toggle.dark-active { background: var(--primary); }
+    #theme-toggle::after { content: ''; position: absolute; width: 18px; height: 18px; background: white; border-radius: 50%; top: 3px; left: 3px; transition: transform 0.2s; box-shadow: 0 1px 3px rgba(0,0,0,0.2); }
+    #theme-toggle.dark-active::after { transform: translateX(16px); }
+    #back-to-top { position: fixed; bottom: 24px; right: 24px; width: 44px; height: 44px; background-color: var(--primary); color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; border: none; box-shadow: 0 4px 12px rgba(217,119,87,0.35); transition: opacity 0.2s, transform 0.2s; opacity: 0; pointer-events: none; z-index: 40; }
+    #back-to-top.visible { opacity: 1; pointer-events: auto; }
+    #back-to-top:hover { transform: translateY(-2px); }
+    #mobile-header { position: sticky; top: 0; z-index: 30; background-color: var(--surface); border-bottom: 1px solid var(--border); }
+    #overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 45; }
+    #overlay.active { display: block; }
+    .flow-circle { width: 48px; height: 48px; border-radius: 50%; background-color: var(--primary-light); border: 2px solid var(--primary); display: flex; align-items: center; justify-content: center; color: var(--primary); font-weight: 700; font-size: 1rem; }
+    .badge { display: inline-flex; align-items: center; padding: 2px 8px; border-radius: 9999px; font-size: 0.75rem; font-weight: 600; }
+    .badge-primary { background-color: var(--primary-light); color: var(--primary); }
+    .badge-success { background-color: var(--success-bg); color: var(--success); }
+    .badge-info { background-color: var(--info-bg); color: var(--info); }
+    code:not(.code-block *) { font-family: 'JetBrains Mono', monospace; font-size: 0.8125em; background-color: var(--border-subtle); border: 1px solid var(--border); color: var(--primary); padding: 1px 5px; border-radius: 4px; }
+    :focus-visible { outline: 2px solid var(--primary); outline-offset: 2px; border-radius: 4px; }
+    @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; } }
+    .content-area { min-width: 0; flex: 1; }
+    .step-num { width: 32px; height: 32px; border-radius: 50%; background-color: var(--primary); color: white; display: flex; align-items: center; justify-content: center; font-size: 0.875rem; font-weight: 700; flex-shrink: 0; }
+  </style>
+</head>
+<body>
+
+<div id="overlay" aria-hidden="true"></div>
+
+<!-- 모바일 헤더 -->
+<header id="mobile-header" class="lg:hidden">
+  <div style="display:flex; align-items:center; justify-content:space-between; padding:0 16px; height:56px;">
+    <button id="hamburger" aria-label="메뉴 열기" style="padding:8px; border-radius:8px; background:transparent; border:none; cursor:pointer; color:var(--text-primary);">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+    </button>
+    <span style="font-weight:700; font-size:0.875rem; color:var(--primary);">Claude Code 플레이북</span>
+    <button id="theme-toggle-mobile" aria-label="다크 모드 전환" style="padding:8px; border-radius:8px; background:transparent; border:none; cursor:pointer; color:var(--text-primary);">
+      <svg id="sun-icon-m" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+      <svg id="moon-icon-m" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:none"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+    </button>
+  </div>
+</header>
+
+<div style="display:flex; min-height:100vh;">
+
+  <!-- 사이드바 -->
+  <aside id="sidebar" style="height:100vh; overflow:hidden; display:flex; flex-direction:column; position:sticky; top:0;">
+    <div style="padding:20px; border-bottom:1px solid var(--border);">
+      <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:4px;">
+        <div style="display:flex; align-items:center; gap:8px;">
+          <div style="width:28px; height:28px; border-radius:8px; background:var(--primary); color:white; display:flex; align-items:center; justify-content:center; font-weight:700; font-size:0.875rem;">C</div>
+          <span style="font-weight:700; font-size:0.875rem; color:var(--text-primary);">Claude Code</span>
+        </div>
+        <button id="theme-toggle" aria-label="다크 모드 전환" aria-pressed="false"></button>
+      </div>
+      <p style="font-size:0.75rem; color:var(--text-tertiary); margin:0;">팀 플레이북 v1.0</p>
+    </div>
+    <div style="padding:12px 16px; border-bottom:1px solid var(--border);">
+      <div style="display:flex; align-items:center; justify-content:space-between; font-size:0.75rem; margin-bottom:6px;">
+        <span style="color:var(--text-secondary);">전체 진행률</span>
+        <span id="sidebar-progress-text" style="color:var(--primary); font-weight:600;">0%</span>
+      </div>
+      <div style="height:6px; border-radius:4px; overflow:hidden; background:var(--border);">
+        <div id="sidebar-progress-bar" class="progress-bar-fill" style="width:0%;"></div>
+      </div>
+    </div>
+    <nav id="sidebar-nav" style="flex:1; overflow-y:auto; padding:12px; display:flex; flex-direction:column; gap:2px;">
+      <a class="nav-link active" href="#overview" onclick="closeSidebar()"><span style="margin-right:6px; font-size:0.75rem; color:var(--text-tertiary);">01</span>개요</a>
+      <a class="nav-link" href="#prerequisites" onclick="closeSidebar()"><span style="margin-right:6px; font-size:0.75rem; color:var(--text-tertiary);">02</span>사전 준비</a>
+      <a class="nav-link" href="#installation" onclick="closeSidebar()"><span style="margin-right:6px; font-size:0.75rem; color:var(--text-tertiary);">03</span>Claude Code 설치</a>
+      <a class="nav-link" href="#global-config" onclick="closeSidebar()"><span style="margin-right:6px; font-size:0.75rem; color:var(--text-tertiary);">04</span>글로벌 설정</a>
+      <a class="nav-link" href="#omc-setup" onclick="closeSidebar()"><span style="margin-right:6px; font-size:0.75rem; color:var(--text-tertiary);">05</span>OMC 설치</a>
+      <a class="nav-link" href="#plugins" onclick="closeSidebar()"><span style="margin-right:6px; font-size:0.75rem; color:var(--text-tertiary);">06</span>플러그인</a>
+      <a class="nav-link" href="#mcp-servers" onclick="closeSidebar()"><span style="margin-right:6px; font-size:0.75rem; color:var(--text-tertiary);">07</span>MCP 서버</a>
+      <a class="nav-link" href="#hooks" onclick="closeSidebar()"><span style="margin-right:6px; font-size:0.75rem; color:var(--text-tertiary);">08</span>훅 시스템</a>
+      <a class="nav-link" href="#skills" onclick="closeSidebar()"><span style="margin-right:6px; font-size:0.75rem; color:var(--text-tertiary);">09</span>스킬 가이드</a>
+      <a class="nav-link" href="#workflows" onclick="closeSidebar()"><span style="margin-right:6px; font-size:0.75rem; color:var(--text-tertiary);">10</span>일상 워크플로우</a>
+      <a class="nav-link" href="#troubleshooting" onclick="closeSidebar()"><span style="margin-right:6px; font-size:0.75rem; color:var(--text-tertiary);">11</span>트러블슈팅</a>
+      <a class="nav-link" href="#quick-start" onclick="closeSidebar()"><span style="margin-right:6px; font-size:0.75rem; color:var(--text-tertiary);">12</span>빠른 시작 스크립트</a>
+    </nav>
+    <div style="padding:16px; border-top:1px solid var(--border); font-size:0.75rem; color:var(--text-tertiary);">OMC v4.11.1 &middot; 업데이트: 2026-04</div>
+  </aside>
+
+  <!-- 메인 콘텐츠 -->
+  <main class="content-area">
+    <div style="max-width:768px; margin:0 auto; padding:48px 24px;">
+
+      <!-- ==================== 섹션 1: 개요 ==================== -->
+      <section id="overview" style="margin-bottom:80px;">
+        <p style="font-size:0.875rem; font-weight:600; color:var(--primary); margin-bottom:8px;">팀 플레이북</p>
+        <h1 style="font-size:1.875rem; font-weight:700; line-height:2.25rem; color:var(--text-primary); margin-bottom:12px;">Claude Code 팀 플레이북</h1>
+        <p style="font-size:1.125rem; color:var(--text-secondary); line-height:1.75rem; margin-bottom:32px;">
+          Mac/Windows에서 동일한 Claude Code 환경을 <strong style="color:var(--primary);">30분 안에</strong> 구축하세요. 이 가이드를 순서대로 따라가면 팀 전원이 동일한 AI 개발 환경을 갖출 수 있습니다.
+        </p>
+
+        <!-- 전체 진행률 바 -->
+        <div class="card" style="padding:20px; margin-bottom:24px;">
+          <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:12px;">
+            <span style="font-weight:600; font-size:0.875rem; color:var(--text-primary);">셋업 진행률</span>
+            <span id="main-progress-text" style="font-size:0.875rem; font-weight:700; color:var(--primary);">0 / 0 완료</span>
+          </div>
+          <div style="height:8px; border-radius:4px; overflow:hidden; background:var(--border);">
+            <div id="main-progress-bar" class="progress-bar-fill" style="width:0%;"></div>
+          </div>
+          <p style="font-size:0.75rem; color:var(--text-tertiary); margin-top:8px; margin-bottom:0;">체크리스트를 완료하면 자동으로 저장됩니다</p>
+        </div>
+
+        <!-- 요약 카드 4개 -->
+        <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(280px, 1fr)); gap:16px;">
+          <div class="card" style="padding:20px;">
+            <div style="width:40px; height:40px; border-radius:12px; background:var(--primary-light); display:flex; align-items:center; justify-content:center; font-size:1.25rem; margin-bottom:12px;">⚡</div>
+            <h3 style="font-weight:600; color:var(--text-primary); margin-bottom:6px;">Claude Code CLI + OMC</h3>
+            <p style="font-size:0.875rem; color:var(--text-secondary); margin:0;">oh-my-claudecode v4.11.1 — 멀티 에이전트 오케스트레이션 레이어</p>
+          </div>
+          <div class="card" style="padding:20px;">
+            <div style="width:40px; height:40px; border-radius:12px; background:var(--primary-light); display:flex; align-items:center; justify-content:center; font-size:1.25rem; margin-bottom:12px;">🔌</div>
+            <h3 style="font-weight:600; color:var(--text-primary); margin-bottom:6px;">19개 플러그인</h3>
+            <p style="font-size:0.875rem; color:var(--text-secondary); margin:0;">보안, 개발, 디자인, 배포 — 공식 13개 + 개발 3개 + 서드파티 3개</p>
+          </div>
+          <div class="card" style="padding:20px;">
+            <div style="width:40px; height:40px; border-radius:12px; background:var(--primary-light); display:flex; align-items:center; justify-content:center; font-size:1.25rem; margin-bottom:12px;">🔗</div>
+            <h3 style="font-weight:600; color:var(--text-primary); margin-bottom:6px;">MCP 서버 연동</h3>
+            <p style="font-size:0.875rem; color:var(--text-secondary); margin:0;">Notion 워크스페이스와 Claude Code를 직접 연결</p>
+          </div>
+          <div class="card" style="padding:20px;">
+            <div style="width:40px; height:40px; border-radius:12px; background:var(--primary-light); display:flex; align-items:center; justify-content:center; font-size:1.25rem; margin-bottom:12px;">🛠</div>
+            <h3 style="font-weight:600; color:var(--text-primary); margin-bottom:6px;">80+ 스킬</h3>
+            <p style="font-size:0.875rem; color:var(--text-secondary); margin:0;">워크플로우, Google Workspace, 개발 도구 — 키워드 한 줄로 실행</p>
+          </div>
+        </div>
+
+        <div class="callout callout-info" style="margin-top:24px;">
+          <span class="callout-icon">ℹ️</span>
+          <div><strong>예상 소요 시간:</strong> 처음 설치 시 약 25~35분. 섹션 12의 빠른 시작 스크립트를 사용하면 10분 내 완료 가능합니다.</div>
+        </div>
+      </section>
+
+      <hr class="section-divider" style="margin-bottom:80px;" />
+
+      <!-- ==================== 섹션 2: 사전 준비 ==================== -->
+      <section id="prerequisites" style="margin-bottom:80px;">
+        <div class="section-title" style="margin-bottom:8px;"><div class="section-badge">02</div>사전 준비</div>
+        <p style="font-size:0.875rem; color:var(--text-secondary); margin-bottom:24px;">운영체제에 맞는 패키지 관리자와 기본 도구를 설치합니다.</p>
+
+        <div class="card" style="overflow:hidden; margin-bottom:16px;">
+          <div style="display:flex; border-bottom:1px solid var(--border);">
+            <button class="os-tab-btn active" data-os="mac" data-group="prerequisites" onclick="switchOs('mac','prerequisites')">Mac</button>
+            <button class="os-tab-btn" data-os="windows" data-group="prerequisites" onclick="switchOs('windows','prerequisites')">Windows</button>
+          </div>
+          <div style="padding:20px;">
+            <div id="tab-prerequisites-mac" class="os-panel active">
+              <p style="font-size:0.875rem; color:var(--text-secondary); margin-bottom:12px;">macOS에서는 Homebrew를 통해 패키지를 관리합니다.</p>
+              <div class="code-block">
+                <div class="code-block-header">
+                  <span class="code-block-lang">bash</span>
+                  <button class="code-copy-btn" data-copy-target="pre-mac">
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+                    복사
+                  </button>
+                </div>
+                <div class="code-body" id="pre-mac"># Homebrew 설치 (패키지 관리자)
+/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+
+# Node.js 설치
+brew install node
+
+# Git 설치 (Xcode Command Line Tools)
+xcode-select --install
+
+# 설치 확인
+node --version    # v18 이상 권장
+git --version
+npm --version</div>
+              </div>
+              <div class="callout callout-tip" style="margin-top:12px;">
+                <span class="callout-icon">✅</span>
+                <div>Apple Silicon(M1/M2/M3) Mac에서는 설치 후 <code>eval "$(/opt/homebrew/bin/brew shellenv)"</code> 명령을 실행하세요.</div>
+              </div>
+            </div>
+            <div id="tab-prerequisites-windows" class="os-panel">
+              <p style="font-size:0.875rem; color:var(--text-secondary); margin-bottom:12px;">Windows에서는 winget 또는 Chocolatey를 사용합니다.</p>
+              <div class="code-block">
+                <div class="code-block-header">
+                  <span class="code-block-lang">powershell</span>
+                  <button class="code-copy-btn" data-copy-target="pre-win">
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+                    복사
+                  </button>
+                </div>
+                <div class="code-body" id="pre-win"># winget으로 Node.js 설치
+winget install OpenJS.NodeJS
+
+# Git 설치
+winget install Git.Git
+
+# 설치 후 PowerShell 재시작 후 확인
+node --version    # v18 이상 권장
+git --version
+npm --version</div>
+              </div>
+              <div class="callout callout-warning" style="margin-top:12px;">
+                <span class="callout-icon">⚠️</span>
+                <div>winget 설치 후 Node.js가 인식되지 않으면 PowerShell을 완전히 닫고 다시 열어야 합니다.</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card" style="padding:20px;">
+          <p style="font-size:0.875rem; font-weight:600; color:var(--text-primary); margin-bottom:12px;">완료 체크</p>
+          <div class="checklist-item" id="ci-pre-1" role="checkbox" aria-checked="false" tabindex="0">
+            <div class="checklist-cb"><svg width="11" height="8" viewBox="0 0 11 8" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 4 7 10 1"/></svg></div>
+            <span class="checklist-label" style="font-size:0.875rem;">Node.js v18+ 설치 확인 (<code>node --version</code>)</span>
+          </div>
+          <div class="checklist-item" id="ci-pre-2" role="checkbox" aria-checked="false" tabindex="0">
+            <div class="checklist-cb"><svg width="11" height="8" viewBox="0 0 11 8" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 4 7 10 1"/></svg></div>
+            <span class="checklist-label" style="font-size:0.875rem;">Git 설치 확인 (<code>git --version</code>)</span>
+          </div>
+          <div class="checklist-item" id="ci-pre-3" role="checkbox" aria-checked="false" tabindex="0">
+            <div class="checklist-cb"><svg width="11" height="8" viewBox="0 0 11 8" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 4 7 10 1"/></svg></div>
+            <span class="checklist-label" style="font-size:0.875rem;">npm 버전 확인 (<code>npm --version</code>)</span>
+          </div>
+        </div>
+      </section>
+
+      <hr class="section-divider" style="margin-bottom:80px;" />
+
+      <!-- ==================== 섹션 3: 설치 ==================== -->
+      <section id="installation" style="margin-bottom:80px;">
+        <div class="section-title" style="margin-bottom:8px;"><div class="section-badge">03</div>Claude Code 설치</div>
+        <p style="font-size:0.875rem; color:var(--text-secondary); margin-bottom:24px;">npm으로 Claude Code CLI를 전역 설치하고 Anthropic 계정으로 로그인합니다.</p>
+
+        <div class="code-block" style="margin-bottom:16px;">
+          <div class="code-block-header">
+            <span class="code-block-lang">bash</span>
+            <button class="code-copy-btn" data-copy-target="inst-code">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+              복사
+            </button>
+          </div>
+          <div class="code-body" id="inst-code"># Claude Code CLI 전역 설치
+npm install -g @anthropic-ai/claude-code
+
+# 설치 확인
+claude --version
+
+# Claude Code 첫 실행 (로그인 프로세스 시작)
+claude</div>
+        </div>
+
+        <div class="card" style="padding:20px; margin-bottom:16px;">
+          <h3 style="font-weight:600; font-size:0.9375rem; color:var(--text-primary); margin-bottom:16px;">로그인 방법</h3>
+          <div style="display:flex; flex-direction:column; gap:12px;">
+            <div style="display:flex; gap:12px; align-items:flex-start;">
+              <div class="step-num" style="font-size:0.75rem; width:24px; height:24px; margin-top:2px;">1</div>
+              <div><p style="font-size:0.875rem; font-weight:500; color:var(--text-primary); margin-bottom:2px;">Anthropic 계정 준비</p><p style="font-size:0.875rem; color:var(--text-secondary); margin:0;"><code>console.anthropic.com</code>에서 계정을 생성하거나 기존 계정으로 로그인</p></div>
+            </div>
+            <div style="display:flex; gap:12px; align-items:flex-start;">
+              <div class="step-num" style="font-size:0.75rem; width:24px; height:24px; margin-top:2px;">2</div>
+              <div><p style="font-size:0.875rem; font-weight:500; color:var(--text-primary); margin-bottom:2px;">claude 명령 실행</p><p style="font-size:0.875rem; color:var(--text-secondary); margin:0;">터미널에서 <code>claude</code>를 입력하면 브라우저 인증 페이지가 열립니다</p></div>
+            </div>
+            <div style="display:flex; gap:12px; align-items:flex-start;">
+              <div class="step-num" style="font-size:0.75rem; width:24px; height:24px; margin-top:2px;">3</div>
+              <div><p style="font-size:0.875rem; font-weight:500; color:var(--text-primary); margin-bottom:2px;">API 키 설정 (선택)</p><p style="font-size:0.875rem; color:var(--text-secondary); margin:0;">환경변수로 설정하려면 <code>~/.zshrc</code> (Mac) 또는 시스템 환경변수 (Windows)에 추가</p></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="code-block" style="margin-bottom:16px;">
+          <div class="code-block-header">
+            <span class="code-block-lang">bash — API 키 환경변수 설정 (선택)</span>
+            <button class="code-copy-btn" data-copy-target="inst-env">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+              복사
+            </button>
+          </div>
+          <div class="code-body" id="inst-env"># Mac: ~/.zshrc 또는 ~/.bashrc에 추가
+export ANTHROPIC_API_KEY="YOUR_API_KEY_HERE"
+source ~/.zshrc
+
+# Windows PowerShell: 사용자 환경변수에 추가
+[System.Environment]::SetEnvironmentVariable("ANTHROPIC_API_KEY", "YOUR_API_KEY_HERE", "User")</div>
+        </div>
+
+        <div class="card" style="padding:20px;">
+          <p style="font-size:0.875rem; font-weight:600; color:var(--text-primary); margin-bottom:12px;">완료 체크</p>
+          <div class="checklist-item" id="ci-inst-1" role="checkbox" aria-checked="false" tabindex="0">
+            <div class="checklist-cb"><svg width="11" height="8" viewBox="0 0 11 8" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 4 7 10 1"/></svg></div>
+            <span class="checklist-label" style="font-size:0.875rem;">Claude Code 설치 완료 (<code>claude --version</code> 출력 확인)</span>
+          </div>
+          <div class="checklist-item" id="ci-inst-2" role="checkbox" aria-checked="false" tabindex="0">
+            <div class="checklist-cb"><svg width="11" height="8" viewBox="0 0 11 8" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 4 7 10 1"/></svg></div>
+            <span class="checklist-label" style="font-size:0.875rem;">Anthropic 계정 로그인 완료</span>
+          </div>
+        </div>
+      </section>
+
+      <hr class="section-divider" style="margin-bottom:80px;" />
+
+      <!-- ==================== 섹션 4: 글로벌 설정 ==================== -->
+      <section id="global-config" style="margin-bottom:80px;">
+        <div class="section-title" style="margin-bottom:8px;"><div class="section-badge">04</div>글로벌 설정</div>
+        <p style="font-size:0.875rem; color:var(--text-secondary); margin-bottom:24px;">Claude Code가 항상 참조하는 전역 지침 파일과 설정을 구성합니다.</p>
+
+        <div class="card" style="padding:16px; border-color:var(--primary); border-width:2px; margin-bottom:24px; background:var(--primary-light);">
+          <p style="font-weight:600; font-size:0.875rem; color:var(--primary); margin-bottom:8px;">프롬프트로 한번에 설정하기</p>
+          <p style="font-size:0.8125rem; color:var(--text-secondary); margin-bottom:12px;">Claude Code가 이미 설치되어 있다면, 아래 프롬프트를 복사해서 붙여넣기만 하면 CLAUDE.md와 settings.json이 자동 생성됩니다.</p>
+          <div class="code-block">
+            <div class="code-block-header">
+              <span class="code-block-lang">Claude Code 프롬프트</span>
+              <button class="code-copy-btn" data-copy-target="prompt-cfg">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+                복사
+              </button>
+            </div>
+            <div class="code-body" id="prompt-cfg">~/.claude/CLAUDE.md 파일을 아래 내용으로 생성해줘. 이미 있으면 덮어써줘.
+
+# Global CLAUDE.md
+
+## 언어
+- 모든 응답, 커밋 메시지, 주석은 한국어로 작성
+- 코드 내 변수명, 함수명은 영어로 작성
+
+## 응답 스타일
+- 간결하게 핵심만 전달, 불필요한 칭찬이나 서론 생략
+- 이모지 사용 금지 (파일명, 커밋 메시지, 응답 포함)
+
+## 작업 원칙
+- 작업 시작 전 반드시 프로젝트 구조와 CLAUDE.md를 먼저 파악
+- 불확실한 부분은 추측하지 말고 질문할 것
+
+## 코드 작성
+- 기존 코드 스타일과 패턴을 반드시 먼저 파악하고 따를 것
+- 새로운 기능 추가 시 기존 코드에 영향이 없는지 확인
+- 에러 처리를 반드시 포함
+- 코드 중복 금지, 새 함수를 만들기 전에 기존 유틸리티 함수를 먼저 확인하고 재사용할 것
+- 매직 넘버/문자열 대신 명명된 상수 사용
+- 자기 설명적인 코드를 우선, 주석은 의도가 불명확할 때만 작성
+- 부분 구현 금지, 항상 완전한 구현을 할 것
+- 사용하지 않는 코드는 삭제할 것
+
+## 커밋 및 작업 완료
+- 기능 단위로 커밋을 나눌 것 (하나의 커밋에 여러 기능 금지)
+- 작업 중간에도 의미 있는 단위가 완성되면 커밋
+- 커밋 메시지 형식: [카테고리] 변경 내용 요약 (카테고리: feat, fix, refactor, docs, style, test, chore)
+- 작업 완료 시: 프로젝트 CLAUDE.md 업데이트 -> git add -> commit -> push
+
+## 문서 관리
+- 새 프로젝트 생성 시 /project-setup 스킬로 표준 구조 스캐폴딩
+- 프로젝트 CLAUDE.md에는 항상 최신 상태 유지: 프로젝트 개요, 기술 스택, 주요 명령어, 폴더 구조, 최근 변경사항
+- PROGRESS.md가 있으면 진행 상황도 함께 업데이트
+- 새 프로젝트 생성 시 워크스페이스 CLAUDE.md의 규칙을 따를 것
+
+## 테스트
+- 기존 테스트가 있는 프로젝트에서는 변경 후 테스트 실행하여 통과 확인
+- 기존 테스트가 깨지는 변경은 반드시 사전에 알릴 것
+
+## 에러 대응
+- 원인 분석 -> 해결 방안 제시 -> 수정 순서로 진행
+- 동일 에러에 3회 이상 같은 접근으로 실패하면 다른 방법을 시도할 것
+- 반복되는 에러는 CLAUDE.md에 트러블슈팅 항목으로 기록
+
+## 보안
+- 시크릿 키, 토큰, API 키 등 민감 정보는 secrets-vault에서 중앙 관리
+- 토큰 갱신/재인증 시 secrets-vault의 관련 파일을 최신 상태로 업데이트하고 커밋/푸시할 것
+- 토큰 갱신 후 배포 환경의 환경변수도 함께 업데이트할 것
+- 프로젝트별 환경변수는 .env 파일로 관리
+- 코드에 민감 정보를 절대 하드코딩하지 말 것
+- .gitignore에 .secrets-vault, .env 등 민감 파일 포함 확인
+- 외부 패키지 추가 시 신뢰성 확인
+
+## 플러그인 활용
+- 설치된 플러그인이 있으면 적극 활용
+- 코드 리뷰, 보안 점검, 테스트 관련 플러그인은 작업 완료 전 실행
+- 새로운 플러그인이 필요하다고 판단되면 추천
+
+그리고 ~/.claude/settings.json이 없으면 아래 내용으로 생성해줘:
+{
+  "env": { "CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS": "1" },
+  "effortLevel": "high"
+}</div>
+          </div>
+        </div>
+
+        <details style="margin-bottom:24px;">
+          <summary style="cursor:pointer; font-weight:600; font-size:0.875rem; color:var(--text-secondary); display:flex; align-items:center; justify-content:space-between;">
+            <span>수동으로 설정하기 (참고용)</span>
+            <svg class="details-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color:var(--text-tertiary);" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg>
+          </summary>
+          <div style="padding-top:16px;">
+
+        <h3 style="font-weight:600; font-size:0.9375rem; color:var(--text-primary); margin-bottom:8px;">4-1. CLAUDE.md 작성</h3>
+        <p style="font-size:0.875rem; color:var(--text-secondary); margin-bottom:8px;">Claude Code가 모든 대화에서 참조하는 전역 지침. 언어, 코드 스타일, 커밋 규칙 등을 정의합니다.</p>
+        <div style="display:flex; gap:24px; font-size:0.875rem; margin-bottom:12px; flex-wrap:wrap;">
+          <div><span style="color:var(--text-tertiary);">Mac:</span> <code>~/.claude/CLAUDE.md</code></div>
+          <div><span style="color:var(--text-tertiary);">Windows:</span> <code>%USERPROFILE%\.claude\CLAUDE.md</code></div>
+        </div>
+
+        <div class="code-block" style="margin-bottom:24px;">
+          <div class="code-block-header">
+            <span class="code-block-lang">markdown — ~/.claude/CLAUDE.md</span>
+            <button class="code-copy-btn" data-copy-target="cfg-claude">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+              복사
+            </button>
+          </div>
+          <div class="code-body" id="cfg-claude"># Global CLAUDE.md
+
+## 언어
+- 모든 응답, 커밋 메시지, 주석은 한국어로 작성
+- 코드 내 변수명, 함수명은 영어로 작성
+
+## 응답 스타일
+- 간결하게 핵심만 전달, 불필요한 칭찬이나 서론 생략
+- 이모지 사용 금지 (파일명, 커밋 메시지, 응답 포함)
+
+## 작업 원칙
+- 작업 시작 전 반드시 프로젝트 구조와 CLAUDE.md를 먼저 파악
+- 불확실한 부분은 추측하지 말고 질문할 것
+
+## 코드 작성
+- 기존 코드 스타일과 패턴을 반드시 먼저 파악하고 따를 것
+- 새로운 기능 추가 시 기존 코드에 영향이 없는지 확인
+- 에러 처리를 반드시 포함
+- 코드 중복 금지, 새 함수를 만들기 전에 기존 유틸리티 함수를 먼저 확인하고 재사용할 것
+- 매직 넘버/문자열 대신 명명된 상수 사용
+- 자기 설명적인 코드를 우선, 주석은 의도가 불명확할 때만 작성
+- 부분 구현 금지, 항상 완전한 구현을 할 것
+- 사용하지 않는 코드는 삭제할 것
+
+## 커밋 및 작업 완료
+- 기능 단위로 커밋을 나눌 것 (하나의 커밋에 여러 기능 금지)
+- 작업 중간에도 의미 있는 단위가 완성되면 커밋
+- 커밋 메시지 형식: [카테고리] 변경 내용 요약
+  - 카테고리: feat, fix, refactor, docs, style, test, chore
+  - 예시: [feat] 사용자 로그인 기능 추가
+- 작업 완료 시: 프로젝트 CLAUDE.md 업데이트 → git add → commit → push
+- PR이 필요한 브랜치 작업인 경우, PR 생성 및 머지까지 진행
+
+## 문서 관리
+- 새 프로젝트 생성 시 /project-setup 스킬로 표준 구조 스캐폴딩
+- 프로젝트 CLAUDE.md에는 항상 최신 상태 유지: 프로젝트 개요, 기술 스택, 주요 명령어(빌드/테스트/실행), 폴더 구조, 최근 변경사항
+- PROGRESS.md가 있으면 진행 상황도 함께 업데이트
+- 새 프로젝트 생성 시 워크스페이스 CLAUDE.md의 규칙을 따를 것
+
+## 테스트
+- 기존 테스트가 있는 프로젝트에서는 변경 후 테스트 실행하여 통과 확인
+- 기존 테스트가 깨지는 변경은 반드시 사전에 알릴 것
+
+## 에러 대응
+- 원인 분석 → 해결 방안 제시 → 수정 순서로 진행
+- 동일 에러에 3회 이상 같은 접근으로 실패하면 다른 방법을 시도할 것
+- 반복되는 에러는 CLAUDE.md에 트러블슈팅 항목으로 기록
+
+## 보안
+- 시크릿 키, 토큰, API 키 등 민감 정보는 secrets-vault에서 중앙 관리
+- 토큰 갱신/재인증 시 secrets-vault의 관련 파일을 최신 상태로 업데이트하고 커밋/푸시할 것
+- 토큰 갱신 후 배포 환경(Railway 등)의 환경변수도 함께 업데이트할 것
+- 프로젝트별 환경변수는 .env 파일로 관리
+- 코드에 민감 정보를 절대 하드코딩하지 말 것
+- .gitignore에 .secrets-vault, .env 등 민감 파일 포함 확인
+- 외부 패키지 추가 시 신뢰성 확인
+
+## 플러그인 활용
+- 설치된 플러그인이 있으면 적극 활용
+- 코드 리뷰, 보안 점검, 테스트 관련 플러그인은 작업 완료 전 실행
+- 새로운 플러그인이 필요하다고 판단되면 추천
+
+## Python 버전 관리
+- 설치된 버전:
+  - python3.11: /opt/homebrew/bin/python3.11
+  - python3.13: /opt/homebrew/bin/python3.13
+  - python3.14: /opt/homebrew/bin/python3.14
+  - /usr/bin/python3 (시스템 Python 3.9.6) -- 사용 금지
+- 새 프로젝트: Homebrew로 설치된 최신 안정 버전 사용
+- 기존 프로젝트: .python-version 또는 pyproject.toml 우선 참조
+- venv 생성 시 반드시 Homebrew Python 사용
+- 글로벌 CLI 도구 설치: pipx install &lt;패키지&gt;</div>
+        </div>
+
+        <h3 style="font-weight:600; font-size:0.9375rem; color:var(--text-primary); margin-bottom:8px;">4-2. settings.json 설정</h3>
+        <div style="display:flex; gap:24px; font-size:0.875rem; margin-bottom:12px; flex-wrap:wrap;">
+          <div><span style="color:var(--text-tertiary);">Mac:</span> <code>~/.claude/settings.json</code></div>
+          <div><span style="color:var(--text-tertiary);">Windows:</span> <code>%USERPROFILE%\.claude\settings.json</code></div>
+        </div>
+
+        <div class="code-block" style="margin-bottom:12px;">
+          <div class="code-block-header">
+            <span class="code-block-lang">json — ~/.claude/settings.json</span>
+            <button class="code-copy-btn" data-copy-target="cfg-settings">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+              복사
+            </button>
+          </div>
+          <div class="code-body" id="cfg-settings">{
+  "env": {
+    "CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS": "1"
+  },
+  "effortLevel": "high",
+  "hooks": { }
+}</div>
+        </div>
+
+        <div class="callout callout-tip" style="margin-bottom:16px;">
+          <span class="callout-icon">💡</span>
+          <div><strong>Tip:</strong> settings.json은 OMC 설치(/omc-setup) 시 자동으로 구성됩니다. 섹션 5 완료 후 훅 설정이 자동으로 추가됩니다.</div>
+        </div>
+
+          </div>
+        </details>
+
+        <div class="card" style="padding:20px;">
+          <p style="font-size:0.875rem; font-weight:600; color:var(--text-primary); margin-bottom:12px;">완료 체크</p>
+          <div class="checklist-item" id="ci-cfg-1" role="checkbox" aria-checked="false" tabindex="0">
+            <div class="checklist-cb"><svg width="11" height="8" viewBox="0 0 11 8" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 4 7 10 1"/></svg></div>
+            <span class="checklist-label" style="font-size:0.875rem;">CLAUDE.md 작성 완료</span>
+          </div>
+          <div class="checklist-item" id="ci-cfg-2" role="checkbox" aria-checked="false" tabindex="0">
+            <div class="checklist-cb"><svg width="11" height="8" viewBox="0 0 11 8" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 4 7 10 1"/></svg></div>
+            <span class="checklist-label" style="font-size:0.875rem;">settings.json 확인 완료</span>
+          </div>
+        </div>
+      </section>
+
+      <hr class="section-divider" style="margin-bottom:80px;" />
+
+      <!-- ==================== 섹션 5: OMC 설치 ==================== -->
+      <section id="omc-setup" style="margin-bottom:80px;">
+        <div class="section-title" style="margin-bottom:8px;"><div class="section-badge">05</div>OMC 설치</div>
+        <p style="font-size:0.875rem; color:var(--text-secondary); margin-bottom:24px;">oh-my-claudecode(OMC)는 Claude Code 위에 올라가는 멀티 에이전트 오케스트레이션 레이어입니다.</p>
+
+        <div class="card" style="padding:16px; border-color:var(--primary); border-width:2px; margin-bottom:24px; background:var(--primary-light);">
+          <p style="font-weight:600; font-size:0.875rem; color:var(--primary); margin-bottom:8px;">프롬프트로 설정하기</p>
+          <p style="font-size:0.8125rem; color:var(--text-secondary); margin-bottom:12px;">Claude Code 안에서 아래 프롬프트를 붙여넣으면 OMC가 자동 설치됩니다.</p>
+          <div class="code-block">
+            <div class="code-block-header">
+              <span class="code-block-lang">Claude Code 프롬프트</span>
+              <button class="code-copy-btn" data-copy-target="prompt-omc">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+                복사
+              </button>
+            </div>
+            <div class="code-body" id="prompt-omc">터미널에서 npm install -g oh-my-claude-sisyphus@latest 명령을 실행해서 OMC를 설치해줘. 설치가 완료되면 /omc-setup 을 실행해서 초기 셋업을 진행해줘.</div>
+          </div>
+        </div>
+
+        <details style="margin-bottom:16px;">
+          <summary style="cursor:pointer; font-weight:600; font-size:0.875rem; color:var(--text-secondary); display:flex; align-items:center; justify-content:space-between;">
+            <span>수동으로 설치하기 (참고용)</span>
+            <svg class="details-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color:var(--text-tertiary);" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg>
+          </summary>
+          <div style="padding-top:16px;">
+
+        <div class="code-block" style="margin-bottom:12px;">
+          <div class="code-block-header">
+            <span class="code-block-lang">bash</span>
+            <button class="code-copy-btn" data-copy-target="omc-install">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+              복사
+            </button>
+          </div>
+          <div class="code-body" id="omc-install"># oh-my-claudecode npm 패키지 전역 설치
+npm install -g oh-my-claude-sisyphus@latest
+
+# 설치 확인 경로: ~/.claude/.omc-version.json
+
+# Claude Code를 열고 프롬프트에서 실행
+/omc-setup</div>
+        </div>
+
+        <div class="callout callout-info" style="margin-bottom:16px;">
+          <span class="callout-icon">ℹ️</span>
+          <div><strong>/omc-setup을 Claude Code 내에서 실행하세요.</strong> npm install 후 터미널에서 <code>claude</code>를 입력해 Claude Code를 열고, 채팅창에 <code>/omc-setup</code>을 입력합니다.</div>
+        </div>
+
+        <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(280px, 1fr)); gap:12px; margin-bottom:16px;">
+          <div class="card" style="padding:16px;">
+            <div style="display:flex; align-items:center; gap:8px; margin-bottom:6px;"><span style="font-size:1.25rem;">🤖</span><span style="font-weight:600; font-size:0.875rem; color:var(--text-primary);">멀티 에이전트 오케스트레이션</span></div>
+            <p style="font-size:0.875rem; color:var(--text-secondary); margin:0;">Planner, Architect, Executor, Verifier가 협력해 복잡한 작업을 처리</p>
+          </div>
+          <div class="card" style="padding:16px;">
+            <div style="display:flex; align-items:center; gap:8px; margin-bottom:6px;"><span style="font-size:1.25rem;">📦</span><span style="font-weight:600; font-size:0.875rem; color:var(--text-primary);">80+ 스킬 자동 설치</span></div>
+            <p style="font-size:0.875rem; color:var(--text-secondary); margin:0;">autopilot, ralph, ultrawork 등 핵심 워크플로우 스킬이 자동으로 활성화</p>
+          </div>
+          <div class="card" style="padding:16px;">
+            <div style="display:flex; align-items:center; gap:8px; margin-bottom:6px;"><span style="font-size:1.25rem;">🎣</span><span style="font-weight:600; font-size:0.875rem; color:var(--text-primary);">7개 라이프사이클 훅</span></div>
+            <p style="font-size:0.875rem; color:var(--text-secondary); margin:0;">세션 시작, 프롬프트 제출, 도구 사용 전/후 등 주요 이벤트에 자동 대응</p>
+          </div>
+          <div class="card" style="padding:16px;">
+            <div style="display:flex; align-items:center; gap:8px; margin-bottom:6px;"><span style="font-size:1.25rem;">📊</span><span style="font-weight:600; font-size:0.875rem; color:var(--text-primary);">HUD 상태 표시줄</span></div>
+            <p style="font-size:0.875rem; color:var(--text-secondary); margin:0;">현재 활성 모드, 진행 상태, 에러 횟수 등을 실시간으로 표시</p>
+          </div>
+        </div>
+
+        <div class="card" style="padding:20px;">
+          <p style="font-size:0.875rem; font-weight:600; color:var(--text-primary); margin-bottom:12px;">완료 체크</p>
+          <div class="checklist-item" id="ci-omc-1" role="checkbox" aria-checked="false" tabindex="0">
+            <div class="checklist-cb"><svg width="11" height="8" viewBox="0 0 11 8" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 4 7 10 1"/></svg></div>
+            <span class="checklist-label" style="font-size:0.875rem;">npm install -g oh-my-claude-sisyphus@latest 완료</span>
+          </div>
+          <div class="checklist-item" id="ci-omc-2" role="checkbox" aria-checked="false" tabindex="0">
+            <div class="checklist-cb"><svg width="11" height="8" viewBox="0 0 11 8" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 4 7 10 1"/></svg></div>
+            <span class="checklist-label" style="font-size:0.875rem;">Claude Code 내에서 /omc-setup 실행 완료</span>
+          </div>
+          <div class="checklist-item" id="ci-omc-3" role="checkbox" aria-checked="false" tabindex="0">
+            <div class="checklist-cb"><svg width="11" height="8" viewBox="0 0 11 8" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 4 7 10 1"/></svg></div>
+            <span class="checklist-label" style="font-size:0.875rem;">~/.claude/.omc-version.json 파일 생성 확인</span>
+          </div>
+        </div>
+
+          </div>
+        </details>
+      </section>
+
+      <hr class="section-divider" style="margin-bottom:80px;" />
+
+      <!-- ==================== 섹션 6: 플러그인 ==================== -->
+      <section id="plugins" style="margin-bottom:80px;">
+        <div class="section-title" style="margin-bottom:8px;"><div class="section-badge">06</div>플러그인 설치</div>
+        <p style="font-size:0.875rem; color:var(--text-secondary); margin-bottom:24px;">19개 플러그인으로 Claude Code의 기능을 확장합니다.</p>
+
+        <div class="card" style="padding:16px; border-color:var(--primary); border-width:2px; margin-bottom:24px; background:var(--primary-light);">
+          <p style="font-weight:600; font-size:0.875rem; color:var(--primary); margin-bottom:8px;">프롬프트로 설정하기</p>
+          <p style="font-size:0.8125rem; color:var(--text-secondary); margin-bottom:12px;">Claude Code 안에서 아래 프롬프트를 붙여넣으면 플러그인이 자동 설치됩니다.</p>
+          <div class="code-block">
+            <div class="code-block-header">
+              <span class="code-block-lang">Claude Code 프롬프트</span>
+              <button class="code-copy-btn" data-copy-target="prompt-plugins">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+                복사
+              </button>
+            </div>
+            <div class="code-body" id="prompt-plugins">다음 플러그인을 모두 설치해줘. /install-plugin 명령을 사용해서 하나씩 설치하면 돼.
+
+공식 플러그인 (claude-plugins-official):
+semgrep, security-guidance, frontend-design, context7, code-review, superpowers, github, feature-dev, code-simplifier, ralph-loop, playwright, commit-commands, skill-creator
+
+개발 플러그인 (claude-code-plugins):
+agent-sdk-dev, claude-opus-4-5-migration, plugin-dev
+
+서드파티 플러그인:
+- oh-my-claudecode (마켓플레이스: omc)
+- impeccable (마켓플레이스: impeccable, GitHub: pbakaus/impeccable)
+- vercel-plugin (마켓플레이스: vercel-vercel-plugin)
+
+설치 후 settings.json의 enabledPlugins에 모두 true로 등록되어 있는지 확인해줘.</div>
+          </div>
+        </div>
+
+        <div style="margin-bottom:20px;">
+          <div style="display:flex; align-items:center; gap:8px; margin-bottom:12px;">
+            <h3 style="font-weight:600; font-size:0.9375rem; color:var(--text-primary); margin:0;">공식 플러그인</h3>
+            <span class="badge badge-success">13개</span>
+            <span style="font-size:0.75rem; color:var(--text-tertiary);">claude-plugins-official</span>
+          </div>
+          <div class="card" style="overflow:hidden;">
+            <table class="data-table">
+              <thead><tr><th>플러그인</th><th>설명</th></tr></thead>
+              <tbody>
+                <tr><td><code>semgrep</code></td><td style="color:var(--text-secondary);">코드 보안 정적 분석</td></tr>
+                <tr><td><code>security-guidance</code></td><td style="color:var(--text-secondary);">보안 가이드라인 제공</td></tr>
+                <tr><td><code>frontend-design</code></td><td style="color:var(--text-secondary);">프론트엔드 UI 디자인 전문 에이전트</td></tr>
+                <tr><td><code>context7</code></td><td style="color:var(--text-secondary);">최신 라이브러리 문서 실시간 조회</td></tr>
+                <tr><td><code>code-review</code></td><td style="color:var(--text-secondary);">PR 코드 리뷰 자동화</td></tr>
+                <tr><td><code>superpowers</code></td><td style="color:var(--text-secondary);">고급 에이전트 확장 기능</td></tr>
+                <tr><td><code>github</code></td><td style="color:var(--text-secondary);">GitHub 이슈/PR 관리 통합</td></tr>
+                <tr><td><code>feature-dev</code></td><td style="color:var(--text-secondary);">기능 개발 전체 워크플로우</td></tr>
+                <tr><td><code>code-simplifier</code></td><td style="color:var(--text-secondary);">코드 간소화 및 리팩토링</td></tr>
+                <tr><td><code>ralph-loop</code></td><td style="color:var(--text-secondary);">반복 실행 루프 (ralph 모드)</td></tr>
+                <tr><td><code>playwright</code></td><td style="color:var(--text-secondary);">브라우저 자동화 및 E2E 테스트</td></tr>
+                <tr><td><code>commit-commands</code></td><td style="color:var(--text-secondary);">커밋/푸시/PR 자동화 명령</td></tr>
+                <tr><td><code>skill-creator</code></td><td style="color:var(--text-secondary);">커스텀 스킬 생성 도구</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <div style="margin-bottom:20px;">
+          <div style="display:flex; align-items:center; gap:8px; margin-bottom:12px;">
+            <h3 style="font-weight:600; font-size:0.9375rem; color:var(--text-primary); margin:0;">개발 플러그인</h3>
+            <span class="badge badge-info">3개</span>
+            <span style="font-size:0.75rem; color:var(--text-tertiary);">claude-code-plugins</span>
+          </div>
+          <div class="card" style="overflow:hidden;">
+            <table class="data-table">
+              <thead><tr><th>플러그인</th><th>설명</th></tr></thead>
+              <tbody>
+                <tr><td><code>agent-sdk-dev</code></td><td style="color:var(--text-secondary);">Claude Agent SDK 개발 전문 도구</td></tr>
+                <tr><td><code>claude-opus-4-5-migration</code></td><td style="color:var(--text-secondary);">Opus 4.5 마이그레이션 가이드</td></tr>
+                <tr><td><code>plugin-dev</code></td><td style="color:var(--text-secondary);">플러그인 직접 개발 도구</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <div style="margin-bottom:20px;">
+          <div style="display:flex; align-items:center; gap:8px; margin-bottom:12px;">
+            <h3 style="font-weight:600; font-size:0.9375rem; color:var(--text-primary); margin:0;">서드파티 플러그인</h3>
+            <span class="badge badge-primary">3개</span>
+          </div>
+          <div class="card" style="overflow:hidden;">
+            <table class="data-table">
+              <thead><tr><th>플러그인</th><th>설명</th></tr></thead>
+              <tbody>
+                <tr><td><code>oh-my-claudecode</code></td><td style="color:var(--text-secondary);">멀티 에이전트 오케스트레이션 (OMC 핵심)</td></tr>
+                <tr><td><code>impeccable</code></td><td style="color:var(--text-secondary);">UI/UX 디자인 시스템 (21개 디자인 스킬)</td></tr>
+                <tr><td><code>vercel-plugin</code></td><td style="color:var(--text-secondary);">Vercel 배포 및 Edge 함수 통합</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="callout callout-info" style="margin-bottom:16px;">
+          <span class="callout-icon">ℹ️</span>
+          <div><strong>설치 방법:</strong> Claude Code 내에서 <code>/install-plugin [플러그인명]</code> 명령으로 설치하거나, settings.json의 <code>enabledPlugins</code> 배열에 직접 추가할 수 있습니다.</div>
+        </div>
+
+        <div class="card" style="padding:20px;">
+          <p style="font-size:0.875rem; font-weight:600; color:var(--text-primary); margin-bottom:12px;">완료 체크</p>
+          <div class="checklist-item" id="ci-plug-1" role="checkbox" aria-checked="false" tabindex="0">
+            <div class="checklist-cb"><svg width="11" height="8" viewBox="0 0 11 8" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 4 7 10 1"/></svg></div>
+            <span class="checklist-label" style="font-size:0.875rem;">공식 플러그인 설치 완료 (13개)</span>
+          </div>
+          <div class="checklist-item" id="ci-plug-2" role="checkbox" aria-checked="false" tabindex="0">
+            <div class="checklist-cb"><svg width="11" height="8" viewBox="0 0 11 8" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 4 7 10 1"/></svg></div>
+            <span class="checklist-label" style="font-size:0.875rem;">개발 플러그인 설치 완료 (3개)</span>
+          </div>
+          <div class="checklist-item" id="ci-plug-3" role="checkbox" aria-checked="false" tabindex="0">
+            <div class="checklist-cb"><svg width="11" height="8" viewBox="0 0 11 8" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 4 7 10 1"/></svg></div>
+            <span class="checklist-label" style="font-size:0.875rem;">서드파티 플러그인 설치 완료 (3개)</span>
+          </div>
+        </div>
+      </section>
+
+      <hr class="section-divider" style="margin-bottom:80px;" />
+
+      <!-- ==================== 섹션 7: MCP 서버 ==================== -->
+      <section id="mcp-servers" style="margin-bottom:80px;">
+        <div class="section-title" style="margin-bottom:8px;"><div class="section-badge">07</div>MCP 서버 설정</div>
+        <p style="font-size:0.875rem; color:var(--text-secondary); margin-bottom:24px;">Model Context Protocol(MCP)로 Notion 등 외부 서비스를 Claude Code에 직접 연결합니다.</p>
+
+        <div class="card" style="padding:16px; border-color:var(--primary); border-width:2px; margin-bottom:24px; background:var(--primary-light);">
+          <p style="font-weight:600; font-size:0.875rem; color:var(--primary); margin-bottom:8px;">프롬프트로 설정하기</p>
+          <p style="font-size:0.8125rem; color:var(--text-secondary); margin-bottom:12px;">Notion API 토큰을 준비한 후, Claude Code 안에서 아래 프롬프트를 붙여넣으세요.</p>
+          <div class="code-block">
+            <div class="code-block-header">
+              <span class="code-block-lang">Claude Code 프롬프트</span>
+              <button class="code-copy-btn" data-copy-target="prompt-mcp">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+                복사
+              </button>
+            </div>
+            <div class="code-body" id="prompt-mcp">~/.claude/.mcp.json 파일을 아래 내용으로 생성해줘. NOTION_TOKEN 값은 내가 알려줄게.
+
+{
+  "mcpServers": {
+    "notion": {
+      "command": "npx",
+      "args": ["-y", "@notionhq/notion-mcp-server"],
+      "env": {
+        "NOTION_TOKEN": "여기에_토큰_입력"
+      }
+    }
+  }
+}</div>
+          </div>
+        </div>
+
+        <details style="margin-bottom:16px;">
+          <summary style="cursor:pointer; font-weight:600; font-size:0.875rem; color:var(--text-secondary); display:flex; align-items:center; justify-content:space-between;">
+            <span>수동으로 설정하기 (참고용)</span>
+            <svg class="details-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color:var(--text-tertiary);" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg>
+          </summary>
+          <div style="padding-top:16px;">
+
+        <div class="code-block" style="margin-bottom:12px;">
+          <div class="code-block-header">
+            <span class="code-block-lang">json — ~/.claude/.mcp.json</span>
+            <button class="code-copy-btn" data-copy-target="mcp-json">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+              복사
+            </button>
+          </div>
+          <div class="code-body" id="mcp-json">{
+  "mcpServers": {
+    "notion": {
+      "command": "npx",
+      "args": ["-y", "@notionhq/notion-mcp-server"],
+      "env": {
+        "NOTION_TOKEN": "YOUR_NOTION_TOKEN_HERE"
+      }
+    }
+  }
+}</div>
+        </div>
+
+        <div class="callout callout-danger" style="margin-bottom:16px;">
+          <span class="callout-icon">🔒</span>
+          <div><strong>보안 주의:</strong> Notion 토큰은 절대 코드나 공개 저장소에 하드코딩하지 마세요. .gitignore에 .mcp.json이 포함되어 있는지 반드시 확인하세요.</div>
+        </div>
+
+        <div class="card" style="padding:20px; margin-bottom:16px;">
+          <h3 style="font-weight:600; font-size:0.875rem; color:var(--text-primary); margin-bottom:12px;">Notion API 토큰 발급 방법</h3>
+          <div style="display:flex; flex-direction:column; gap:10px;">
+            <div style="display:flex; gap:10px; align-items:flex-start;">
+              <div class="step-num" style="width:20px; height:20px; font-size:0.65rem; margin-top:2px; flex-shrink:0;">1</div>
+              <p style="font-size:0.875rem; color:var(--text-secondary); margin:0;"><code>notion.so/my-integrations</code>에 접속</p>
+            </div>
+            <div style="display:flex; gap:10px; align-items:flex-start;">
+              <div class="step-num" style="width:20px; height:20px; font-size:0.65rem; margin-top:2px; flex-shrink:0;">2</div>
+              <p style="font-size:0.875rem; color:var(--text-secondary); margin:0;">"New integration" 클릭 → 이름 입력 → 워크스페이스 선택</p>
+            </div>
+            <div style="display:flex; gap:10px; align-items:flex-start;">
+              <div class="step-num" style="width:20px; height:20px; font-size:0.65rem; margin-top:2px; flex-shrink:0;">3</div>
+              <p style="font-size:0.875rem; color:var(--text-secondary); margin:0;">생성된 "Internal Integration Secret" 복사 → .mcp.json에 붙여넣기</p>
+            </div>
+            <div style="display:flex; gap:10px; align-items:flex-start;">
+              <div class="step-num" style="width:20px; height:20px; font-size:0.65rem; margin-top:2px; flex-shrink:0;">4</div>
+              <p style="font-size:0.875rem; color:var(--text-secondary); margin:0;">Notion 페이지에서 우상단 "..." → "Connect to" → 생성한 인테그레이션 선택</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="card" style="padding:20px;">
+          <p style="font-size:0.875rem; font-weight:600; color:var(--text-primary); margin-bottom:12px;">완료 체크</p>
+          <div class="checklist-item" id="ci-mcp-1" role="checkbox" aria-checked="false" tabindex="0">
+            <div class="checklist-cb"><svg width="11" height="8" viewBox="0 0 11 8" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 4 7 10 1"/></svg></div>
+            <span class="checklist-label" style="font-size:0.875rem;">~/.claude/.mcp.json 파일 생성 완료</span>
+          </div>
+          <div class="checklist-item" id="ci-mcp-2" role="checkbox" aria-checked="false" tabindex="0">
+            <div class="checklist-cb"><svg width="11" height="8" viewBox="0 0 11 8" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 4 7 10 1"/></svg></div>
+            <span class="checklist-label" style="font-size:0.875rem;">Notion 토큰 발급 및 설정 완료</span>
+          </div>
+        </div>
+
+          </div>
+        </details>
+      </section>
+
+      <hr class="section-divider" style="margin-bottom:80px;" />
+
+      <!-- ==================== 섹션 8: 훅 시스템 ==================== -->
+      <section id="hooks" style="margin-bottom:80px;">
+        <div class="section-title" style="margin-bottom:8px;"><div class="section-badge">08</div>훅 시스템</div>
+        <p style="font-size:0.875rem; color:var(--text-secondary); margin-bottom:24px;">OMC의 훅 시스템은 Claude Code 라이프사이클 이벤트에 자동으로 반응합니다.</p>
+
+        <div class="callout callout-tip" style="margin-bottom:16px;">
+          <span class="callout-icon">✅</span>
+          <div><strong>자동 설정:</strong> 훅은 OMC 설치(/omc-setup) 시 자동으로 구성됩니다. 별도의 수동 설정이 필요하지 않습니다.</div>
+        </div>
+
+        <div class="card" style="overflow:hidden; margin-bottom:16px;">
+          <table class="data-table">
+            <thead><tr><th>이벤트</th><th>훅 파일</th><th>역할</th></tr></thead>
+            <tbody>
+              <tr><td><code>SessionStart</code></td><td><code>session-start.mjs</code></td><td style="color:var(--text-secondary);">활성 모드 복원, 업데이트 알림, 노트패드 로드</td></tr>
+              <tr><td><code>UserPromptSubmit</code></td><td><code>keyword-detector.mjs</code></td><td style="color:var(--text-secondary);">매직 키워드 감지 (ralph, autopilot 등) → 스킬 자동 호출</td></tr>
+              <tr><td><code>PreToolUse</code></td><td><code>pre-tool-use.mjs</code></td><td style="color:var(--text-secondary);">소스 파일 직접 수정 경고, 팀 워커 권한 제한</td></tr>
+              <tr><td><code>PostToolUse</code></td><td><code>post-tool-use.mjs</code></td><td style="color:var(--text-secondary);">&lt;remember&gt; 태그 처리 → 노트패드 저장, Ralph 상태 활성화</td></tr>
+              <tr><td><code>PostToolUseFailure</code></td><td><code>post-tool-use-failure.mjs</code></td><td style="color:var(--text-secondary);">에러 상태 기록, 재시도 횟수 추적</td></tr>
+              <tr><td><code>Stop (1)</code></td><td><code>persistent-mode.mjs</code></td><td style="color:var(--text-secondary);">OMC 모드 중단 방지, 에러 재시도 가이드 제공</td></tr>
+              <tr><td><code>Stop (2)</code></td><td><code>code-simplifier.mjs</code></td><td style="color:var(--text-secondary);">수정 파일 자동 감지 → 코드 심플리파이 에이전트 위임</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="card" style="padding:20px;">
+          <h3 style="font-weight:600; font-size:0.875rem; color:var(--text-primary); margin-bottom:8px;">매직 키워드 (keyword-detector 훅)</h3>
+          <p style="font-size:0.875rem; color:var(--text-secondary); margin-bottom:12px;">프롬프트에 다음 키워드를 입력하면 해당 스킬이 자동 실행됩니다.</p>
+          <div style="display:flex; flex-wrap:wrap; gap:6px;">
+            <span class="badge badge-primary">autopilot</span>
+            <span class="badge badge-primary">ralph</span>
+            <span class="badge badge-primary">ulw</span>
+            <span class="badge badge-primary">ralplan</span>
+            <span class="badge badge-primary">deep interview</span>
+            <span class="badge badge-primary">deslop</span>
+            <span class="badge badge-primary">anti-slop</span>
+            <span class="badge badge-primary">tdd</span>
+            <span class="badge badge-primary">deepsearch</span>
+            <span class="badge badge-primary">ultrathink</span>
+            <span class="badge badge-primary">ccg</span>
+            <span class="badge badge-primary">code review</span>
+            <span class="badge badge-primary">security review</span>
+            <span class="badge badge-primary">deep-analyze</span>
+            <span class="badge badge-primary">cancelomc</span>
+          </div>
+        </div>
+
+        <div style="margin-top:24px;">
+          <p style="font-weight:600; font-size:0.875rem; color:var(--text-primary); margin-bottom:8px;">확인 체크리스트</p>
+          <div id="ci-hook-1" class="checklist-item" role="checkbox" aria-checked="false" tabindex="0">
+            <div class="checklist-check"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></div>
+            <span class="checklist-label">settings.json에 훅 7개 (5개 이벤트)가 등록되어 있는지 확인</span>
+          </div>
+          <div id="ci-hook-2" class="checklist-item" role="checkbox" aria-checked="false" tabindex="0">
+            <div class="checklist-check"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></div>
+            <span class="checklist-label">매직 키워드 "autopilot" 입력 시 스킬 자동 호출 확인</span>
+          </div>
+        </div>
+      </section>
+
+      <hr class="section-divider" style="margin-bottom:80px;" />
+
+      <!-- ==================== 섹션 9: 스킬 가이드 ==================== -->
+      <section id="skills" style="margin-bottom:80px;">
+        <div class="section-title" style="margin-bottom:8px;"><div class="section-badge">09</div>스킬 가이드</div>
+        <p style="font-size:0.875rem; color:var(--text-secondary); margin-bottom:24px;">80개 이상의 스킬을 카테고리별로 정리했습니다. 클릭해서 펼치세요.</p>
+
+        <div style="display:flex; flex-direction:column; gap:8px;">
+          <!-- Tier-0 -->
+          <div class="card" style="overflow:hidden;">
+            <details>
+              <summary>
+                <div style="display:flex; align-items:center; gap:10px;">
+                  <span style="font-size:1.25rem;">⚡</span>
+                  <div>
+                    <span style="font-weight:600; color:var(--text-primary);">핵심 워크플로우 (Tier-0)</span>
+                    <span style="font-size:0.75rem; color:var(--text-tertiary); margin-left:8px;">6개 스킬</span>
+                  </div>
+                </div>
+                <svg class="details-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color:var(--text-tertiary);" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg>
+              </summary>
+              <div style="border-top:1px solid var(--border); padding:16px;">
+                <table class="data-table">
+                  <thead><tr><th>스킬</th><th>트리거</th><th>설명</th></tr></thead>
+                  <tbody>
+                    <tr><td><code>autopilot</code></td><td><span class="badge badge-primary">"autopilot"</span></td><td style="color:var(--text-secondary);">아이디어→코드 완전 자동 실행. 탐색→계획→실행→검증 전 과정 자동화</td></tr>
+                    <tr><td><code>ralph</code></td><td><span class="badge badge-primary">"ralph"</span></td><td style="color:var(--text-secondary);">완료까지 반복 실행. Verifier가 OK 할 때까지 루프</td></tr>
+                    <tr><td><code>ultrawork</code></td><td><span class="badge badge-primary">"ulw"</span></td><td style="color:var(--text-secondary);">독립 작업 병렬 실행. N개 에이전트가 동시에 처리</td></tr>
+                    <tr><td><code>team</code></td><td><span class="badge badge-primary">"/team"</span></td><td style="color:var(--text-secondary);">N개 전문 에이전트 협업 파이프라인 구성</td></tr>
+                    <tr><td><code>ralplan</code></td><td><span class="badge badge-primary">"ralplan"</span></td><td style="color:var(--text-secondary);">합의 계획 — Planner → Architect → Critic 순서로 계획 검증</td></tr>
+                    <tr><td><code>deep-interview</code></td><td><span class="badge badge-primary">"deep interview"</span></td><td style="color:var(--text-secondary);">소크라테스식 요구사항 정제. 모호한 요청을 명확한 스펙으로</td></tr>
+                  </tbody>
+                </table>
+              </div>
+            </details>
+          </div>
+
+          <!-- 개발 도구 -->
+          <div class="card" style="overflow:hidden;">
+            <details>
+              <summary>
+                <div style="display:flex; align-items:center; gap:10px;">
+                  <span style="font-size:1.25rem;">🔧</span>
+                  <div>
+                    <span style="font-weight:600; color:var(--text-primary);">개발 도구</span>
+                    <span style="font-size:0.75rem; color:var(--text-tertiary); margin-left:8px;">5개 스킬</span>
+                  </div>
+                </div>
+                <svg class="details-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color:var(--text-tertiary);" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg>
+              </summary>
+              <div style="border-top:1px solid var(--border); padding:16px;">
+                <table class="data-table">
+                  <thead><tr><th>스킬</th><th>설명</th></tr></thead>
+                  <tbody>
+                    <tr><td><code>deepinit</code></td><td style="color:var(--text-secondary);">계층적 AGENTS.md 자동 생성 — 프로젝트 전체 문서화</td></tr>
+                    <tr><td><code>trace</code></td><td style="color:var(--text-secondary);">이슈/버그 인과관계 추적, 타임라인 분석</td></tr>
+                    <tr><td><code>ai-slop-cleaner</code></td><td style="color:var(--text-secondary);">AI 생성 코드 품질 정리 ("deslop" 또는 "anti-slop" 키워드)</td></tr>
+                    <tr><td><code>self-improve</code></td><td style="color:var(--text-secondary);">자가 진화 코드 개선 루프</td></tr>
+                    <tr><td><code>project-session-manager</code></td><td style="color:var(--text-secondary);">Git 워크트리 기반 병렬 개발 환경 관리</td></tr>
+                  </tbody>
+                </table>
+              </div>
+            </details>
+          </div>
+
+          <!-- Google Workspace -->
+          <div class="card" style="overflow:hidden;">
+            <details>
+              <summary>
+                <div style="display:flex; align-items:center; gap:10px;">
+                  <span style="font-size:1.25rem;">📧</span>
+                  <div>
+                    <span style="font-weight:600; color:var(--text-primary);">Google Workspace</span>
+                    <span style="font-size:0.75rem; color:var(--text-tertiary); margin-left:8px;">Gmail, Calendar, Sheets, Docs, Drive, Chat, Tasks, Forms, Slides</span>
+                  </div>
+                </div>
+                <svg class="details-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color:var(--text-tertiary);" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg>
+              </summary>
+              <div style="border-top:1px solid var(--border); padding:16px;">
+                <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(200px, 1fr)); gap:16px;">
+                  <div>
+                    <p style="font-size:0.75rem; font-weight:600; color:var(--text-tertiary); text-transform:uppercase; letter-spacing:0.04em; margin-bottom:8px;">Gmail</p>
+                    <ul style="font-size:0.875rem; color:var(--text-secondary); list-style:none; padding:0; margin:0; display:flex; flex-direction:column; gap:4px;">
+                      <li>이메일 읽기/발송/회신</li>
+                      <li>자동 분류 및 레이블링</li>
+                      <li>필터 생성 자동화</li>
+                      <li>팀 공지 일괄 발송</li>
+                    </ul>
+                  </div>
+                  <div>
+                    <p style="font-size:0.75rem; font-weight:600; color:var(--text-tertiary); text-transform:uppercase; letter-spacing:0.04em; margin-bottom:8px;">Calendar</p>
+                    <ul style="font-size:0.875rem; color:var(--text-secondary); list-style:none; padding:0; margin:0; display:flex; flex-direction:column; gap:4px;">
+                      <li>일정 조회/생성</li>
+                      <li>반복 일정 예약</li>
+                      <li>빈 시간 자동 탐색</li>
+                      <li>시트 → 이벤트 자동 생성</li>
+                    </ul>
+                  </div>
+                  <div>
+                    <p style="font-size:0.75rem; font-weight:600; color:var(--text-tertiary); text-transform:uppercase; letter-spacing:0.04em; margin-bottom:8px;">Sheets / Docs / Drive</p>
+                    <ul style="font-size:0.875rem; color:var(--text-secondary); list-style:none; padding:0; margin:0; display:flex; flex-direction:column; gap:4px;">
+                      <li>시트 읽기/쓰기/추가</li>
+                      <li>월별 시트 복사 자동화</li>
+                      <li>Docs 초안 작성/수정</li>
+                      <li>Drive 파일 공유/알림</li>
+                    </ul>
+                  </div>
+                  <div>
+                    <p style="font-size:0.75rem; font-weight:600; color:var(--text-tertiary); text-transform:uppercase; letter-spacing:0.04em; margin-bottom:8px;">기타</p>
+                    <ul style="font-size:0.875rem; color:var(--text-secondary); list-style:none; padding:0; margin:0; display:flex; flex-direction:column; gap:4px;">
+                      <li>Chat 메시지 발송</li>
+                      <li>Tasks 관리</li>
+                      <li>Forms 응답 수집</li>
+                      <li>Slides 프레젠테이션 생성</li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+            </details>
+          </div>
+
+          <!-- 페르소나 -->
+          <div class="card" style="overflow:hidden;">
+            <details>
+              <summary>
+                <div style="display:flex; align-items:center; gap:10px;">
+                  <span style="font-size:1.25rem;">👤</span>
+                  <div>
+                    <span style="font-weight:600; color:var(--text-primary);">페르소나</span>
+                    <span style="font-size:0.75rem; color:var(--text-tertiary); margin-left:8px;">역할 기반 전문 에이전트</span>
+                  </div>
+                </div>
+                <svg class="details-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color:var(--text-tertiary);" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg>
+              </summary>
+              <div style="border-top:1px solid var(--border); padding:16px;">
+                <table class="data-table">
+                  <thead><tr><th>스킬</th><th>설명</th></tr></thead>
+                  <tbody>
+                    <tr><td><code>persona-sales-ops</code></td><td style="color:var(--text-secondary);">세일즈 파이프라인, CRM, 성과 추적 워크플로우</td></tr>
+                    <tr><td><code>persona-exec-assistant</code></td><td style="color:var(--text-secondary);">일정 관리, 이메일 처리, 보고서 작성 비서 업무</td></tr>
+                    <tr><td><code>persona-team-lead</code></td><td style="color:var(--text-secondary);">팀 리드 관점의 코드 리뷰, 기술 의사결정</td></tr>
+                    <tr><td><code>persona-project-manager</code></td><td style="color:var(--text-secondary);">프로젝트 계획, 일정 추적, 리스크 관리</td></tr>
+                  </tbody>
+                </table>
+              </div>
+            </details>
+          </div>
+
+          <!-- 커스텀 스킬 (팀 자체 제작) -->
+          <div class="card" style="overflow:hidden;">
+            <details>
+              <summary>
+                <div style="display:flex; align-items:center; gap:10px;">
+                  <span style="font-size:1.25rem;">&#9733;</span>
+                  <div>
+                    <span style="font-weight:600; color:var(--text-primary);">팀 커스텀 스킬</span>
+                    <span style="font-size:0.75rem; color:var(--text-tertiary); margin-left:8px;">자체 제작 3개</span>
+                  </div>
+                </div>
+                <svg class="details-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color:var(--text-tertiary);" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg>
+              </summary>
+              <div style="border-top:1px solid var(--border); padding:16px;">
+                <table class="data-table">
+                  <thead><tr><th>스킬</th><th>트리거</th><th>설명</th></tr></thead>
+                  <tbody>
+                    <tr><td><code>project-setup</code></td><td><span class="badge badge-primary">"/project-setup"</span></td><td style="color:var(--text-secondary);">새 프로젝트 표준 구조 스캐폴딩 — CLAUDE.md, AGENTS.md, ARCHITECTURE.md, docs/ (4가지 모드)</td></tr>
+                    <tr><td><code>update-docs</code></td><td><span class="badge badge-primary">"문서 업데이트"</span></td><td style="color:var(--text-secondary);">프로젝트 내 모든 .md 문서를 현재 코드 상태와 비교하여 일괄 업데이트</td></tr>
+                    <tr><td><code>notebooklm</code></td><td><span class="badge badge-primary">"/notebooklm"</span></td><td style="color:var(--text-secondary);">Google NotebookLM 연동 — 노트북 생성, 소스 추가, 팟캐스트/요약 생성, 다운로드</td></tr>
+                  </tbody>
+                </table>
+                <div class="callout callout-tip" style="margin-top:12px;">
+                  <span class="callout-icon">&#10003;</span>
+                  <div><strong>스킬 직접 만들기:</strong> <code>/skill add</code> 또는 <code>/learner</code> 명령으로 반복 워크플로우를 스킬로 추출할 수 있습니다.</div>
+                </div>
+              </div>
+            </details>
+          </div>
+        </div>
+
+        <div style="margin-top:24px;">
+          <p style="font-weight:600; font-size:0.875rem; color:var(--text-primary); margin-bottom:8px;">확인 체크리스트</p>
+          <div id="ci-skill-1" class="checklist-item" role="checkbox" aria-checked="false" tabindex="0">
+            <div class="checklist-check"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></div>
+            <span class="checklist-label">핵심 스킬(autopilot, ralph, ulw) 테스트 실행 확인</span>
+          </div>
+          <div id="ci-skill-2" class="checklist-item" role="checkbox" aria-checked="false" tabindex="0">
+            <div class="checklist-check"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></div>
+            <span class="checklist-label">스킬 목록 확인 (/skill list 실행)</span>
+          </div>
+        </div>
+      </section>
+
+      <hr class="section-divider" style="margin-bottom:80px;" />
+
+      <!-- ==================== 섹션 10: 워크플로우 ==================== -->
+      <section id="workflows" style="margin-bottom:80px;">
+        <div class="section-title" style="margin-bottom:8px;"><div class="section-badge">10</div>일상 워크플로우</div>
+        <p style="font-size:0.875rem; color:var(--text-secondary); margin-bottom:24px;">팀의 표준 개발 흐름. 각 단계에서 사용하는 명령어를 확인하세요.</p>
+
+        <!-- 플로우 다이어그램 -->
+        <div class="card" style="padding:24px; margin-bottom:20px;">
+          <div style="display:flex; align-items:center; justify-content:space-between; overflow-x:auto; gap:4px;">
+            <div style="display:flex; flex-direction:column; align-items:center; gap:6px; flex:1; min-width:60px;">
+              <div class="flow-circle">1</div>
+              <span style="font-size:0.75rem; font-weight:500; color:var(--text-secondary); text-align:center;">코드 작성</span>
+            </div>
+            <span style="color:var(--text-tertiary); font-size:1.25rem; flex-shrink:0;">→</span>
+            <div style="display:flex; flex-direction:column; align-items:center; gap:6px; flex:1; min-width:60px;">
+              <div class="flow-circle">2</div>
+              <span style="font-size:0.75rem; font-weight:500; color:var(--text-secondary); text-align:center;">리뷰</span>
+            </div>
+            <span style="color:var(--text-tertiary); font-size:1.25rem; flex-shrink:0;">→</span>
+            <div style="display:flex; flex-direction:column; align-items:center; gap:6px; flex:1; min-width:60px;">
+              <div class="flow-circle">3</div>
+              <span style="font-size:0.75rem; font-weight:500; color:var(--text-secondary); text-align:center;">커밋</span>
+            </div>
+            <span style="color:var(--text-tertiary); font-size:1.25rem; flex-shrink:0;">→</span>
+            <div style="display:flex; flex-direction:column; align-items:center; gap:6px; flex:1; min-width:60px;">
+              <div class="flow-circle">4</div>
+              <span style="font-size:0.75rem; font-weight:500; color:var(--text-secondary); text-align:center;">PR</span>
+            </div>
+            <span style="color:var(--text-tertiary); font-size:1.25rem; flex-shrink:0;">→</span>
+            <div style="display:flex; flex-direction:column; align-items:center; gap:6px; flex:1; min-width:60px;">
+              <div class="flow-circle">5</div>
+              <span style="font-size:0.75rem; font-weight:500; color:var(--text-secondary); text-align:center;">배포</span>
+            </div>
+          </div>
+        </div>
+
+        <div style="display:flex; flex-direction:column; gap:12px;">
+          <div class="card" style="padding:20px;">
+            <div style="display:flex; align-items:flex-start; gap:16px;">
+              <div class="step-num">1</div>
+              <div style="flex:1; min-width:0;">
+                <h3 style="font-weight:600; font-size:0.875rem; color:var(--text-primary); margin-bottom:6px;">코드 작성</h3>
+                <p style="font-size:0.875rem; color:var(--text-secondary); margin-bottom:10px;">OMC 워크플로우 스킬로 아이디어를 코드로 자동 변환합니다.</p>
+                <div style="display:flex; flex-wrap:wrap; gap:6px; margin-bottom:10px;">
+                  <span class="badge badge-primary">autopilot — 완전 자동화</span>
+                  <span class="badge badge-primary">ralph — 검증 루프</span>
+                  <span class="badge badge-primary">ulw — 병렬 처리</span>
+                </div>
+                <div class="code-block">
+                  <div class="code-block-header">
+                    <span class="code-block-lang">프롬프트 예시</span>
+                    <button class="code-copy-btn" data-copy-target="wf-step1">
+                      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+                      복사
+                    </button>
+                  </div>
+                  <div class="code-body" id="wf-step1">autopilot: Pipedrive API에서 이번 주 클로즈된 딜을 가져와서
+Google Sheets에 업데이트하는 스크립트를 만들어줘</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="card" style="padding:20px;">
+            <div style="display:flex; align-items:flex-start; gap:16px;">
+              <div class="step-num">2</div>
+              <div style="flex:1; min-width:0;">
+                <h3 style="font-weight:600; font-size:0.875rem; color:var(--text-primary); margin-bottom:6px;">코드 리뷰</h3>
+                <p style="font-size:0.875rem; color:var(--text-secondary); margin-bottom:10px;">code-review 플러그인으로 변경사항을 자동 검토합니다.</p>
+                <div class="code-block">
+                  <div class="code-block-header">
+                    <span class="code-block-lang">Claude Code 내 명령</span>
+                    <button class="code-copy-btn" data-copy-target="wf-step2">
+                      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+                      복사
+                    </button>
+                  </div>
+                  <div class="code-body" id="wf-step2">/code-review</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="card" style="padding:20px;">
+            <div style="display:flex; align-items:flex-start; gap:16px;">
+              <div class="step-num">3</div>
+              <div style="flex:1; min-width:0;">
+                <h3 style="font-weight:600; font-size:0.875rem; color:var(--text-primary); margin-bottom:6px;">커밋</h3>
+                <p style="font-size:0.875rem; color:var(--text-secondary); margin-bottom:10px;">팀 커밋 컨벤션을 준수하는 커밋 메시지를 자동 생성합니다.</p>
+                <div class="code-block">
+                  <div class="code-block-header">
+                    <span class="code-block-lang">Claude Code 내 명령</span>
+                    <button class="code-copy-btn" data-copy-target="wf-step3">
+                      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+                      복사
+                    </button>
+                  </div>
+                  <div class="code-body" id="wf-step3"># 커밋 자동 생성 (CLAUDE.md 커밋 규칙 자동 적용)
+/commit
+
+# 형식: [카테고리] 변경 내용 요약
+# 예시 출력: [feat] Pipedrive 딜 싱크 스크립트 추가</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="card" style="padding:20px;">
+            <div style="display:flex; align-items:flex-start; gap:16px;">
+              <div class="step-num">4</div>
+              <div style="flex:1; min-width:0;">
+                <h3 style="font-weight:600; font-size:0.875rem; color:var(--text-primary); margin-bottom:6px;">PR 생성</h3>
+                <p style="font-size:0.875rem; color:var(--text-secondary); margin-bottom:10px;">커밋, 푸시, PR 생성을 한 번에 처리합니다.</p>
+                <div class="code-block">
+                  <div class="code-block-header">
+                    <span class="code-block-lang">Claude Code 내 명령</span>
+                    <button class="code-copy-btn" data-copy-target="wf-step4">
+                      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+                      복사
+                    </button>
+                  </div>
+                  <div class="code-body" id="wf-step4">/commit-push-pr</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="card" style="padding:20px;">
+            <div style="display:flex; align-items:flex-start; gap:16px;">
+              <div class="step-num">5</div>
+              <div style="flex:1; min-width:0;">
+                <h3 style="font-weight:600; font-size:0.875rem; color:var(--text-primary); margin-bottom:6px;">배포</h3>
+                <p style="font-size:0.875rem; color:var(--text-secondary); margin-bottom:10px;">Vercel 플러그인으로 배포를 자동화합니다.</p>
+                <div class="code-block">
+                  <div class="code-block-header">
+                    <span class="code-block-lang">Claude Code 내 명령</span>
+                    <button class="code-copy-btn" data-copy-target="wf-step5">
+                      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+                      복사
+                    </button>
+                  </div>
+                  <div class="code-body" id="wf-step5"># 프리뷰 배포
+/deploy
+
+# 프로덕션 배포
+vercel --prod</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <hr class="section-divider" style="margin-bottom:80px;" />
+
+      <!-- ==================== 섹션 11: 트러블슈팅 ==================== -->
+      <section id="troubleshooting" style="margin-bottom:80px;">
+        <div class="section-title" style="margin-bottom:8px;"><div class="section-badge">11</div>트러블슈팅</div>
+        <p style="font-size:0.875rem; color:var(--text-secondary); margin-bottom:24px;">자주 발생하는 문제와 해결 방법입니다. 클릭해서 펼치세요.</p>
+
+        <div style="display:flex; flex-direction:column; gap:8px;">
+
+          <div class="card" style="overflow:hidden;">
+            <details>
+              <summary>
+                <div style="display:flex; align-items:center; gap:8px;">
+                  <span style="color:var(--danger); font-size:1rem; font-weight:700; flex-shrink:0;">✕</span>
+                  <span style="font-weight:500; font-size:0.875rem; color:var(--text-primary);">"claude 명령어를 찾을 수 없음" (command not found)</span>
+                </div>
+                <svg class="details-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color:var(--text-tertiary);" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg>
+              </summary>
+              <div style="border-top:1px solid var(--border); padding:16px;">
+                <div class="code-block">
+                  <div class="code-block-header">
+                    <span class="code-block-lang">bash</span>
+                    <button class="code-copy-btn" data-copy-target="ts-1">
+                      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+                      복사
+                    </button>
+                  </div>
+                  <div class="code-body" id="ts-1"># 재설치
+npm install -g @anthropic-ai/claude-code
+
+# npm 글로벌 경로 확인
+npm config get prefix
+
+# PATH에 추가 (Mac - ~/.zshrc에 추가)
+export PATH="$PATH:$(npm config get prefix)/bin"
+source ~/.zshrc
+
+# Windows: 시스템 환경변수 PATH에 추가
+# 일반적으로: C:\Users\{사용자명}\AppData\Roaming\npm</div>
+                </div>
+              </div>
+            </details>
+          </div>
+
+          <div class="card" style="overflow:hidden;">
+            <details>
+              <summary>
+                <div style="display:flex; align-items:center; gap:8px;">
+                  <span style="color:var(--danger); font-size:1rem; font-weight:700; flex-shrink:0;">✕</span>
+                  <span style="font-weight:500; font-size:0.875rem; color:var(--text-primary);">"OMC 훅 에러" 또는 훅이 작동하지 않음</span>
+                </div>
+                <svg class="details-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color:var(--text-tertiary);" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg>
+              </summary>
+              <div style="border-top:1px solid var(--border); padding:16px;">
+                <div class="code-block">
+                  <div class="code-block-header">
+                    <span class="code-block-lang">bash</span>
+                    <button class="code-copy-btn" data-copy-target="ts-2">
+                      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+                      복사
+                    </button>
+                  </div>
+                  <div class="code-body" id="ts-2"># Claude Code 내에서 진단 실행
+/omc-doctor
+
+# Node.js 버전 확인 (v18 이상 필요)
+node --version
+
+# 업그레이드 (Mac)
+brew upgrade node
+
+# OMC 재설치
+npm install -g oh-my-claude-sisyphus@latest</div>
+                </div>
+              </div>
+            </details>
+          </div>
+
+          <div class="card" style="overflow:hidden;">
+            <details>
+              <summary>
+                <div style="display:flex; align-items:center; gap:8px;">
+                  <span style="color:var(--danger); font-size:1rem; font-weight:700; flex-shrink:0;">✕</span>
+                  <span style="font-weight:500; font-size:0.875rem; color:var(--text-primary);">플러그인이 로드되지 않음</span>
+                </div>
+                <svg class="details-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color:var(--text-tertiary);" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg>
+              </summary>
+              <div style="border-top:1px solid var(--border); padding:16px; display:flex; flex-direction:column; gap:12px;">
+                <div class="code-block">
+                  <div class="code-block-header">
+                    <span class="code-block-lang">json — settings.json enabledPlugins 확인</span>
+                    <button class="code-copy-btn" data-copy-target="ts-3">
+                      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+                      복사
+                    </button>
+                  </div>
+                  <div class="code-body" id="ts-3">{
+  "enabledPlugins": [
+    "semgrep", "context7", "code-review",
+    "commit-commands", "github", "playwright"
+  ]
+}</div>
+                </div>
+                <p style="font-size:0.875rem; color:var(--text-secondary); margin:0;">Claude Code를 완전히 종료 후 재시작하세요. 캐시 문제 시 <code>~/.claude/cache</code> 폴더 삭제 후 재시작합니다.</p>
+              </div>
+            </details>
+          </div>
+
+          <div class="card" style="overflow:hidden;">
+            <details>
+              <summary>
+                <div style="display:flex; align-items:center; gap:8px;">
+                  <span style="color:var(--danger); font-size:1rem; font-weight:700; flex-shrink:0;">✕</span>
+                  <span style="font-weight:500; font-size:0.875rem; color:var(--text-primary);">MCP 서버 연결 실패 (Notion 연결 안 됨)</span>
+                </div>
+                <svg class="details-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color:var(--text-tertiary);" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg>
+              </summary>
+              <div style="border-top:1px solid var(--border); padding:16px;">
+                <div class="code-block">
+                  <div class="code-block-header">
+                    <span class="code-block-lang">bash — 진단 단계</span>
+                    <button class="code-copy-btn" data-copy-target="ts-4">
+                      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+                      복사
+                    </button>
+                  </div>
+                  <div class="code-body" id="ts-4"># .mcp.json JSON 문법 확인
+cat ~/.claude/.mcp.json | python3 -m json.tool
+
+# npx 캐시 삭제
+rm -rf ~/.npm/_npx
+
+# 토큰 재발급: notion.so/my-integrations
+# .mcp.json NOTION_TOKEN 값 업데이트 후 Claude Code 재시작</div>
+                </div>
+              </div>
+            </details>
+          </div>
+
+          <div class="card" style="overflow:hidden;">
+            <details>
+              <summary>
+                <div style="display:flex; align-items:center; gap:8px;">
+                  <span style="color:var(--danger); font-size:1rem; font-weight:700; flex-shrink:0;">✕</span>
+                  <span style="font-weight:500; font-size:0.875rem; color:var(--text-primary);">Windows에서 경로 오류 발생</span>
+                </div>
+                <svg class="details-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color:var(--text-tertiary);" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg>
+              </summary>
+              <div style="border-top:1px solid var(--border); padding:16px;">
+                <div class="code-block">
+                  <div class="code-block-header">
+                    <span class="code-block-lang">powershell</span>
+                    <button class="code-copy-btn" data-copy-target="ts-5">
+                      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+                      복사
+                    </button>
+                  </div>
+                  <div class="code-body" id="ts-5"># 백슬래시(\) 대신 슬래시(/) 사용
+# 잘못된 예: C:\Users\name\.claude\
+# 올바른 예: C:/Users/name/.claude/
+
+# 환경변수 확인
+echo $env:USERPROFILE
+echo $env:PATH
+
+# 실행 정책 문제 시
+Set-ExecutionPolicy RemoteSigned -Scope CurrentUser</div>
+                </div>
+              </div>
+            </details>
+          </div>
+
+          <div class="card" style="overflow:hidden;">
+            <details>
+              <summary>
+                <div style="display:flex; align-items:center; gap:8px;">
+                  <span style="color:var(--danger); font-size:1rem; font-weight:700; flex-shrink:0;">✕</span>
+                  <span style="font-weight:500; font-size:0.875rem; color:var(--text-primary);">API 키 인증 실패</span>
+                </div>
+                <svg class="details-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color:var(--text-tertiary);" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg>
+              </summary>
+              <div style="border-top:1px solid var(--border); padding:16px;">
+                <div class="code-block">
+                  <div class="code-block-header">
+                    <span class="code-block-lang">bash</span>
+                    <button class="code-copy-btn" data-copy-target="ts-6">
+                      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+                      복사
+                    </button>
+                  </div>
+                  <div class="code-body" id="ts-6"># 로그아웃 후 재로그인
+claude logout
+claude login</div>
+                </div>
+              </div>
+            </details>
+          </div>
+
+          <div class="card" style="overflow:hidden;">
+            <details>
+              <summary>
+                <div style="display:flex; align-items:center; gap:8px;">
+                  <span style="color:var(--warning); font-size:1rem; font-weight:700; flex-shrink:0;">!</span>
+                  <span style="font-weight:500; font-size:0.875rem; color:var(--text-primary);">Context window 초과 오류</span>
+                </div>
+                <svg class="details-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color:var(--text-tertiary);" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg>
+              </summary>
+              <div style="border-top:1px solid var(--border); padding:16px;">
+                <div class="code-block">
+                  <div class="code-block-header">
+                    <span class="code-block-lang">Claude Code 내 명령</span>
+                    <button class="code-copy-btn" data-copy-target="ts-7">
+                      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+                      복사
+                    </button>
+                  </div>
+                  <div class="code-body" id="ts-7"># 컨텍스트 초기화
+/clear
+
+# 또는 컨텍스트 압축
+/compact</div>
+                </div>
+              </div>
+            </details>
+          </div>
+        </div>
+      </section>
+
+      <hr class="section-divider" style="margin-bottom:80px;" />
+
+      <!-- ==================== 섹션 12: 빠른 시작 ==================== -->
+      <section id="quick-start" style="margin-bottom:48px;">
+        <div class="section-title" style="margin-bottom:8px;"><div class="section-badge">12</div>빠른 시작 가이드</div>
+        <p style="font-size:0.875rem; color:var(--text-secondary); margin-bottom:24px;">개발 경험이 없어도 괜찮습니다. 아래 3단계만 따라하면 됩니다.</p>
+
+        <!-- Step 1: 터미널 열기 -->
+        <div class="card" style="padding:20px; margin-bottom:16px;">
+          <h3 style="font-weight:700; font-size:1rem; color:var(--primary); margin-bottom:12px;">Step 1. 터미널 열기</h3>
+          <div class="card" style="overflow:hidden;">
+            <div style="display:flex; border-bottom:1px solid var(--border);">
+              <button class="os-tab-btn active" data-os="mac" data-group="quickstart" onclick="switchOs('mac','quickstart')">Mac</button>
+              <button class="os-tab-btn" data-os="windows" data-group="quickstart" onclick="switchOs('windows','quickstart')">Windows</button>
+            </div>
+            <div style="padding:16px;">
+              <div id="tab-quickstart-mac" class="os-panel active">
+                <ol style="font-size:0.875rem; color:var(--text-secondary); padding-left:20px; margin:0; display:flex; flex-direction:column; gap:8px;">
+                  <li><strong>Command + Space</strong> 키를 눌러 Spotlight 검색을 엽니다</li>
+                  <li><strong>"터미널"</strong> 이라고 입력하고 Enter를 누릅니다</li>
+                  <li>검은 화면(터미널)이 열리면 준비 완료</li>
+                </ol>
+              </div>
+              <div id="tab-quickstart-windows" class="os-panel">
+                <ol style="font-size:0.875rem; color:var(--text-secondary); padding-left:20px; margin:0; display:flex; flex-direction:column; gap:8px;">
+                  <li>화면 하단 <strong>시작 버튼</strong>을 우클릭합니다</li>
+                  <li><strong>"Windows PowerShell"</strong> 또는 <strong>"터미널"</strong>을 클릭합니다</li>
+                  <li>파란 화면(PowerShell)이 열리면 준비 완료</li>
+                </ol>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Step 2: 설치 명령어 -->
+        <div class="card" style="padding:20px; margin-bottom:16px;">
+          <h3 style="font-weight:700; font-size:1rem; color:var(--primary); margin-bottom:4px;">Step 2. 설치 명령어 실행</h3>
+          <p style="font-size:0.8125rem; color:var(--text-secondary); margin-bottom:16px;">아래 명령어를 <strong>한 줄씩</strong> 복사해서 터미널에 붙여넣고 Enter를 누르세요.</p>
+
+          <div style="display:flex; flex-direction:column; gap:12px;">
+            <div>
+              <p style="font-size:0.8125rem; font-weight:600; color:var(--text-primary); margin-bottom:4px;">2-1. Node.js 설치 확인</p>
+              <div class="card" style="overflow:hidden;">
+                <div style="display:flex; border-bottom:1px solid var(--border);">
+                  <button class="os-tab-btn active" data-os="mac" data-group="qs-node" onclick="switchOs('mac','qs-node')">Mac</button>
+                  <button class="os-tab-btn" data-os="windows" data-group="qs-node" onclick="switchOs('windows','qs-node')">Windows</button>
+                </div>
+                <div style="padding:0;">
+                  <div id="tab-qs-node-mac" class="os-panel active">
+                    <div class="code-block" style="border-radius:0;">
+                      <div class="code-block-header">
+                        <span class="code-block-lang">터미널</span>
+                        <button class="code-copy-btn" data-copy-target="qs2-node-mac"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg> 복사</button>
+                      </div>
+                      <div class="code-body" id="qs2-node-mac">brew install node</div>
+                    </div>
+                  </div>
+                  <div id="tab-qs-node-windows" class="os-panel">
+                    <div class="code-block" style="border-radius:0;">
+                      <div class="code-block-header">
+                        <span class="code-block-lang">PowerShell</span>
+                        <button class="code-copy-btn" data-copy-target="qs2-node-win"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg> 복사</button>
+                      </div>
+                      <div class="code-body" id="qs2-node-win">winget install OpenJS.NodeJS</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <p style="font-size:0.75rem; color:var(--text-tertiary); margin-top:4px;">이미 설치되어 있다면 건너뛰세요. <code>node --version</code> 으로 확인 가능합니다.</p>
+            </div>
+
+            <div>
+              <p style="font-size:0.8125rem; font-weight:600; color:var(--text-primary); margin-bottom:4px;">2-2. Claude Code 설치</p>
+              <div class="code-block">
+                <div class="code-block-header">
+                  <span class="code-block-lang">터미널 (Mac/Windows 동일)</span>
+                  <button class="code-copy-btn" data-copy-target="qs2-claude"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg> 복사</button>
+                </div>
+                <div class="code-body" id="qs2-claude">npm install -g @anthropic-ai/claude-code</div>
+              </div>
+            </div>
+
+            <div>
+              <p style="font-size:0.8125rem; font-weight:600; color:var(--text-primary); margin-bottom:4px;">2-3. Claude Code 실행 및 로그인</p>
+              <div class="code-block">
+                <div class="code-block-header">
+                  <span class="code-block-lang">터미널 (Mac/Windows 동일)</span>
+                  <button class="code-copy-btn" data-copy-target="qs2-login"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg> 복사</button>
+                </div>
+                <div class="code-body" id="qs2-login">claude</div>
+              </div>
+              <p style="font-size:0.75rem; color:var(--text-tertiary); margin-top:4px;">브라우저가 열리면 Anthropic 계정으로 로그인하세요. 로그인 후 터미널로 돌아오면 Claude Code가 준비된 상태입니다.</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Step 3: 올인원 셋업 프롬프트 -->
+        <div class="card" style="padding:20px; margin-bottom:16px; border-color:var(--primary); border-width:2px;">
+          <h3 style="font-weight:700; font-size:1rem; color:var(--primary); margin-bottom:4px;">Step 3. 셋업 프롬프트 붙여넣기</h3>
+          <p style="font-size:0.8125rem; color:var(--text-secondary); margin-bottom:16px;">Claude Code가 실행된 상태에서 아래 프롬프트를 <strong>통째로 복사</strong>해서 붙여넣고 Enter를 누르세요. 나머지는 Claude Code가 알아서 합니다.</p>
+
+          <div class="code-block">
+            <div class="code-block-header">
+              <span class="code-block-lang">Claude Code 올인원 셋업 프롬프트</span>
+              <button class="code-copy-btn" data-copy-target="qs-allinone">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+                복사
+              </button>
+            </div>
+            <div class="code-body" id="qs-allinone">아래 작업을 순서대로 진행해줘. 각 단계가 완료되면 다음 단계로 넘어가고, 에러가 나면 해결 방법을 알려줘.
+
+## 1단계: 글로벌 CLAUDE.md 생성
+~/.claude/CLAUDE.md 파일을 아래 내용으로 생성해줘:
+
+# Global CLAUDE.md
+
+## 언어
+- 모든 응답, 커밋 메시지, 주석은 한국어로 작성
+- 코드 내 변수명, 함수명은 영어로 작성
+
+## 응답 스타일
+- 간결하게 핵심만 전달, 불필요한 칭찬이나 서론 생략
+- 이모지 사용 금지 (파일명, 커밋 메시지, 응답 포함)
+
+## 작업 원칙
+- 작업 시작 전 반드시 프로젝트 구조와 CLAUDE.md를 먼저 파악
+- 불확실한 부분은 추측하지 말고 질문할 것
+
+## 코드 작성
+- 기존 코드 스타일과 패턴을 반드시 먼저 파악하고 따를 것
+- 새로운 기능 추가 시 기존 코드에 영향이 없는지 확인
+- 에러 처리를 반드시 포함
+- 코드 중복 금지, 새 함수를 만들기 전에 기존 유틸리티 함수를 먼저 확인하고 재사용할 것
+- 매직 넘버/문자열 대신 명명된 상수 사용
+- 자기 설명적인 코드를 우선, 주석은 의도가 불명확할 때만 작성
+- 부분 구현 금지, 항상 완전한 구현을 할 것
+- 사용하지 않는 코드는 삭제할 것
+
+## 커밋 및 작업 완료
+- 기능 단위로 커밋을 나눌 것
+- 커밋 메시지 형식: [카테고리] 변경 내용 요약 (카테고리: feat, fix, refactor, docs, style, test, chore)
+- 작업 완료 시: 프로젝트 CLAUDE.md 업데이트 -> git add -> commit -> push
+
+## 문서 관리
+- 프로젝트 CLAUDE.md에는 항상 최신 상태 유지
+- PROGRESS.md가 있으면 진행 상황도 함께 업데이트
+
+## 테스트
+- 변경 후 테스트 실행하여 통과 확인
+- 기존 테스트가 깨지는 변경은 반드시 사전에 알릴 것
+
+## 에러 대응
+- 원인 분석 -> 해결 방안 제시 -> 수정 순서로 진행
+- 동일 에러에 3회 이상 같은 접근으로 실패하면 다른 방법 시도
+
+## 보안
+- 민감 정보는 .env 파일로 관리, 코드에 하드코딩 금지
+- .gitignore에 .env 등 민감 파일 포함 확인
+
+## 2단계: settings.json 생성
+~/.claude/settings.json 파일이 없으면 아래 내용으로 생성해줘:
+{
+  "env": { "CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS": "1" },
+  "effortLevel": "high"
+}
+
+## 3단계: OMC 설치
+터미널에서 다음 명령을 실행해줘:
+npm install -g oh-my-claude-sisyphus@latest
+
+설치가 완료되면 /omc-setup 을 실행해줘.
+
+## 4단계: 완료 확인
+위 작업이 모두 끝나면 아래를 확인해서 알려줘:
+- ~/.claude/CLAUDE.md 파일이 존재하는지
+- ~/.claude/settings.json 파일이 존재하는지
+- ~/.claude/.omc-version.json 파일이 존재하는지 (OMC 설치 확인)</div>
+          </div>
+
+          <div class="callout callout-tip" style="margin-top:12px;">
+            <span class="callout-icon">&#10003;</span>
+            <div>이 프롬프트 실행 후 추가로 플러그인을 설치하려면 <strong>섹션 6</strong>의 "프롬프트로 설정하기"를 사용하세요.</div>
+          </div>
+        </div>
+
+        <!-- 최종 완료 체크 -->
+        <div class="card" style="padding:20px; border-color:var(--primary); border-width:2px; margin-bottom:16px;">
+          <p style="font-size:0.875rem; font-weight:600; color:var(--primary); margin-bottom:12px;">셋업 완료 최종 확인</p>
+          <div class="checklist-item" id="ci-final-1" role="checkbox" aria-checked="false" tabindex="0">
+            <div class="checklist-cb"><svg width="11" height="8" viewBox="0 0 11 8" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 4 7 10 1"/></svg></div>
+            <span class="checklist-label" style="font-size:0.875rem;">claude --version 정상 출력</span>
+          </div>
+          <div class="checklist-item" id="ci-final-2" role="checkbox" aria-checked="false" tabindex="0">
+            <div class="checklist-cb"><svg width="11" height="8" viewBox="0 0 11 8" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 4 7 10 1"/></svg></div>
+            <span class="checklist-label" style="font-size:0.875rem;">claude 로그인 완료, 정상 응답 확인</span>
+          </div>
+          <div class="checklist-item" id="ci-final-3" role="checkbox" aria-checked="false" tabindex="0">
+            <div class="checklist-cb"><svg width="11" height="8" viewBox="0 0 11 8" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 4 7 10 1"/></svg></div>
+            <span class="checklist-label" style="font-size:0.875rem;">/omc-setup 완료, OMC 스킬 로드 확인</span>
+          </div>
+          <div class="checklist-item" id="ci-final-4" role="checkbox" aria-checked="false" tabindex="0">
+            <div class="checklist-cb"><svg width="11" height="8" viewBox="0 0 11 8" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 4 7 10 1"/></svg></div>
+            <span class="checklist-label" style="font-size:0.875rem;">플러그인 설치 완료 (19개)</span>
+          </div>
+          <div class="checklist-item" id="ci-final-5" role="checkbox" aria-checked="false" tabindex="0">
+            <div class="checklist-cb"><svg width="11" height="8" viewBox="0 0 11 8" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 4 7 10 1"/></svg></div>
+            <span class="checklist-label" style="font-size:0.875rem;">Notion MCP 연결 테스트 완료</span>
+          </div>
+        </div>
+
+        <!-- 완료 축하 메시지 -->
+        <div id="completion-msg" class="card" style="display:none; padding:24px; text-align:center; border-color:var(--success); border-width:2px;">
+          <div style="font-size:2rem; margin-bottom:8px;">🎉</div>
+          <h3 style="font-weight:700; font-size:1.125rem; color:var(--success); margin-bottom:8px;">셋업 완료!</h3>
+          <p style="font-size:0.875rem; color:var(--text-secondary); margin:0;">모든 항목을 완료했습니다. Claude Code로 생산성 높은 개발을 시작하세요.</p>
+        </div>
+      </section>
+
+    </div>
+  </main>
+</div>
+
+<!-- 맨 위로 버튼 -->
+<button id="back-to-top" aria-label="맨 위로 스크롤">
+  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="18 15 12 9 6 15"/></svg>
+</button>
+
+<script>
+// ================== 다크 모드 ==================
+var DARK_KEY = 'playbook-dark';
+
+function applyTheme(dark) {
+  document.documentElement.classList.toggle('dark', dark);
+  var toggle = document.getElementById('theme-toggle');
+  var sunM = document.getElementById('sun-icon-m');
+  var moonM = document.getElementById('moon-icon-m');
+  if (toggle) {
+    toggle.classList.toggle('dark-active', dark);
+    toggle.setAttribute('aria-pressed', dark ? 'true' : 'false');
+  }
+  if (sunM) sunM.style.display = dark ? 'none' : '';
+  if (moonM) moonM.style.display = dark ? '' : 'none';
+}
+
+function initTheme() {
+  var saved = localStorage.getItem(DARK_KEY);
+  var prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+  applyTheme(saved !== null ? saved === '1' : prefersDark);
+}
+
+function toggleTheme() {
+  var isDark = document.documentElement.classList.contains('dark');
+  localStorage.setItem(DARK_KEY, isDark ? '0' : '1');
+  applyTheme(!isDark);
+}
+
+initTheme();
+
+document.addEventListener('DOMContentLoaded', function() {
+  var t = document.getElementById('theme-toggle');
+  var tm = document.getElementById('theme-toggle-mobile');
+  if (t) t.addEventListener('click', toggleTheme);
+  if (tm) tm.addEventListener('click', toggleTheme);
+  window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', function(e) {
+    if (localStorage.getItem(DARK_KEY) === null) applyTheme(e.matches);
+  });
+});
+
+// ================== 사이드바 (모바일) ==================
+function closeSidebar() {
+  var sidebar = document.getElementById('sidebar');
+  var overlay = document.getElementById('overlay');
+  if (sidebar) sidebar.classList.remove('open');
+  if (overlay) overlay.classList.remove('active');
+  document.body.style.overflow = '';
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+  var hamburger = document.getElementById('hamburger');
+  var sidebar = document.getElementById('sidebar');
+  var overlay = document.getElementById('overlay');
+
+  if (hamburger) {
+    hamburger.addEventListener('click', function() {
+      sidebar.classList.add('open');
+      overlay.classList.add('active');
+      document.body.style.overflow = 'hidden';
+    });
+  }
+  if (overlay) {
+    overlay.addEventListener('click', closeSidebar);
+  }
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape' && sidebar && sidebar.classList.contains('open')) closeSidebar();
+  });
+});
+
+// ================== IntersectionObserver — 섹션 네비게이션 ==================
+document.addEventListener('DOMContentLoaded', function() {
+  var sections = document.querySelectorAll('section[id]');
+  var navLinks = document.querySelectorAll('.nav-link');
+
+  var observer = new IntersectionObserver(function(entries) {
+    entries.forEach(function(entry) {
+      if (entry.isIntersecting) {
+        navLinks.forEach(function(link) {
+          link.classList.toggle('active', link.getAttribute('href') === '#' + entry.target.id);
+        });
+      }
+    });
+  }, { rootMargin: '-30% 0px -60% 0px', threshold: 0 });
+
+  sections.forEach(function(s) { observer.observe(s); });
+});
+
+// ================== 코드 복사 ==================
+document.addEventListener('DOMContentLoaded', function() {
+  document.querySelectorAll('.code-copy-btn').forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      var targetId = btn.getAttribute('data-copy-target');
+      var codeEl = targetId ? document.getElementById(targetId) : btn.closest('.code-block').querySelector('.code-body');
+      if (!codeEl) return;
+      var text = codeEl.textContent;
+
+      navigator.clipboard.writeText(text).then(function() {
+        var svg = btn.querySelector('svg');
+        var span = btn.lastChild;
+        if (svg) svg.setAttribute('stroke', '#16A34A');
+        if (span && span.nodeType === 3) span.nodeValue = ' 복사됨';
+        btn.style.color = '#16A34A';
+        setTimeout(function() {
+          if (svg) svg.setAttribute('stroke', 'currentColor');
+          if (span && span.nodeType === 3) span.nodeValue = ' 복사';
+          btn.style.color = '';
+        }, 2000);
+      }).catch(function() {
+        var range = document.createRange();
+        range.selectNode(codeEl);
+        window.getSelection().removeAllRanges();
+        window.getSelection().addRange(range);
+      });
+    });
+  });
+});
+
+// ================== OS 탭 전환 ==================
+var OS_KEY = 'playbook-os';
+
+function switchOs(os, group) {
+  localStorage.setItem(OS_KEY, os);
+  document.querySelectorAll('[data-group="' + group + '"]').forEach(function(btn) {
+    btn.classList.toggle('active', btn.getAttribute('data-os') === os);
+  });
+  var macPanel = document.getElementById('tab-' + group + '-mac');
+  var winPanel = document.getElementById('tab-' + group + '-windows');
+  if (macPanel) macPanel.classList.toggle('active', os === 'mac');
+  if (winPanel) winPanel.classList.toggle('active', os === 'windows');
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+  var saved = localStorage.getItem(OS_KEY);
+  if (saved && saved !== 'mac') {
+    ['prerequisites', 'quickstart'].forEach(function(group) {
+      switchOs(saved, group);
+    });
+  }
+});
+
+// ================== 체크리스트 + 진행률 ==================
+var CHECK_PREFIX = 'playbook-check-';
+var CHECKLIST_IDS = [
+  'ci-pre-1','ci-pre-2','ci-pre-3',
+  'ci-inst-1','ci-inst-2',
+  'ci-cfg-1','ci-cfg-2',
+  'ci-omc-1','ci-omc-2','ci-omc-3',
+  'ci-plug-1','ci-plug-2','ci-plug-3',
+  'ci-mcp-1','ci-mcp-2',
+  'ci-hook-1','ci-hook-2',
+  'ci-skill-1','ci-skill-2',
+  'ci-final-1','ci-final-2','ci-final-3','ci-final-4','ci-final-5'
+];
+
+function updateProgress() {
+  var total = CHECKLIST_IDS.length;
+  var done = 0;
+  CHECKLIST_IDS.forEach(function(id) {
+    var el = document.getElementById(id);
+    if (el && el.classList.contains('done')) done++;
+  });
+  var pct = total > 0 ? Math.round((done / total) * 100) : 0;
+
+  var mainBar = document.getElementById('main-progress-bar');
+  var mainText = document.getElementById('main-progress-text');
+  var sideBar = document.getElementById('sidebar-progress-bar');
+  var sideText = document.getElementById('sidebar-progress-text');
+  var completionMsg = document.getElementById('completion-msg');
+
+  if (mainBar) mainBar.style.width = pct + '%';
+  if (mainText) mainText.textContent = done + ' / ' + total + ' 완료';
+  if (sideBar) sideBar.style.width = pct + '%';
+  if (sideText) sideText.textContent = pct + '%';
+  if (completionMsg) completionMsg.style.display = (total > 0 && done === total) ? '' : 'none';
+}
+
+function toggleCheck(el) {
+  var isDone = el.classList.contains('done');
+  el.classList.toggle('done', !isDone);
+  el.setAttribute('aria-checked', !isDone ? 'true' : 'false');
+  localStorage.setItem(CHECK_PREFIX + el.id, !isDone ? '1' : '0');
+  updateProgress();
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+  CHECKLIST_IDS.forEach(function(id) {
+    var el = document.getElementById(id);
+    if (!el) return;
+    var saved = localStorage.getItem(CHECK_PREFIX + id);
+    if (saved === '1') {
+      el.classList.add('done');
+      el.setAttribute('aria-checked', 'true');
+    }
+    el.addEventListener('click', function() { toggleCheck(el); });
+    el.addEventListener('keydown', function(e) {
+      if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); toggleCheck(el); }
+    });
+  });
+  updateProgress();
+});
+
+// ================== 맨 위로 버튼 ==================
+document.addEventListener('DOMContentLoaded', function() {
+  var btn = document.getElementById('back-to-top');
+  if (!btn) return;
+  window.addEventListener('scroll', function() {
+    btn.classList.toggle('visible', window.scrollY > 400);
+  }, { passive: true });
+  btn.addEventListener('click', function() {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  });
+});
+</script>
+</body>
+</html>
