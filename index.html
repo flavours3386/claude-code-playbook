@@ -1180,6 +1180,35 @@ agent-sdk-dev, claude-opus-4-5-migration, plugin-dev
                     <tr><td><code>notebooklm</code></td><td><span class="badge badge-primary">"/notebooklm"</span></td><td style="color:var(--text-secondary);">Google NotebookLM 연동 — 노트북 생성, 소스 추가, 팟캐스트/요약 생성, 다운로드</td></tr>
                   </tbody>
                 </table>
+                <div class="callout callout-info" style="margin-top:12px;">
+                  <span class="callout-icon">&#9432;</span>
+                  <div><strong>설치 방법:</strong> 이 스킬들은 플레이북 레포의 <code>skills/</code> 디렉토리에 포함되어 있습니다. 아래 프롬프트로 자동 설치할 수 있습니다.</div>
+                </div>
+
+                <div class="code-block" style="margin-top:12px;">
+                  <div class="code-block-header">
+                    <span class="code-block-lang">Claude Code 프롬프트 - 커스텀 스킬 설치</span>
+                    <button class="code-copy-btn" data-copy-target="prompt-custom-skills">
+                      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+                      복사
+                    </button>
+                  </div>
+                  <div class="code-body" id="prompt-custom-skills">팀 커스텀 스킬 3개를 설치해줘.
+
+1. 먼저 플레이북 레포를 클론해줘:
+   git clone https://github.com/flavours3386/claude-code-playbook.git /tmp/claude-code-playbook
+
+2. 스킬 디렉토리를 복사해줘:
+   cp -r /tmp/claude-code-playbook/skills/project-setup ~/.claude/skills/project-setup
+   cp -r /tmp/claude-code-playbook/skills/update-docs ~/.claude/skills/update-docs
+   cp -r /tmp/claude-code-playbook/skills/notebooklm ~/.claude/skills/notebooklm
+
+3. 임시 디렉토리 정리:
+   rm -rf /tmp/claude-code-playbook
+
+4. 설치 확인: ~/.claude/skills/ 에 project-setup, update-docs, notebooklm 디렉토리가 있는지 확인해줘.</div>
+                </div>
+
                 <div class="callout callout-tip" style="margin-top:12px;">
                   <span class="callout-icon">&#10003;</span>
                   <div><strong>스킬 직접 만들기:</strong> <code>/skill add</code> 또는 <code>/learner</code> 명령으로 반복 워크플로우를 스킬로 추출할 수 있습니다.</div>

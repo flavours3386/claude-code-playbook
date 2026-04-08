@@ -41,6 +41,10 @@ claude-code-playbook/
 ├── index.html             # 메인 플레이북 (2,029줄, 130KB)
 ├── vercel.json            # Vercel 배포 설정
 ├── .gitignore
+├── skills/
+│   ├── project-setup/     # 프로젝트 구조 스캐폴딩 스킬
+│   ├── update-docs/       # 문서 일괄 업데이트 스킬
+│   └── notebooklm/        # NotebookLM 연동 스킬
 └── docs/
     ├── PRODUCT_SENSE.md   # 제품 방향
     ├── PLANS.md           # 우선순위, 로드맵
