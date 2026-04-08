@@ -68,7 +68,7 @@
     body { background-color: var(--bg); color: var(--text-primary); transition: background-color 0.2s, color 0.2s; font-size: 1rem; line-height: 1.75rem; }
     #sidebar { width: 280px; background-color: var(--surface); border-right: 1px solid var(--border); transition: transform 0.3s ease, background-color 0.2s; }
     @media (max-width: 1023px) {
-      #sidebar { position: fixed; top: 0; left: 0; height: 100dvh; z-index: 50; transform: translateX(-100%); box-shadow: 4px 0 24px rgba(0,0,0,0.12); }
+      #sidebar { position: fixed !important; top: 0 !important; left: 0 !important; height: 100dvh !important; z-index: 50; transform: translateX(-100%); box-shadow: 4px 0 24px rgba(0,0,0,0.12); overflow: hidden !important; }
       #sidebar.open { transform: translateX(0); }
     }
     #sidebar-nav::-webkit-scrollbar { width: 4px; }
