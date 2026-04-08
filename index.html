@@ -758,71 +758,417 @@ agent-sdk-dev, claude-opus-4-5-migration, plugin-dev
           </div>
         </div>
 
-        <div style="margin-bottom:20px;">
-          <div style="display:flex; align-items:center; gap:8px; margin-bottom:12px;">
-            <h3 style="font-weight:600; font-size:0.9375rem; color:var(--text-primary); margin:0;">공식 플러그인</h3>
-            <span class="badge badge-success">13개</span>
-            <span style="font-size:0.75rem; color:var(--text-tertiary);">claude-plugins-official</span>
+        <!-- 공식 플러그인 접이식 카드 -->
+        <details style="margin-bottom:12px;" open>
+          <summary style="cursor:pointer; list-style:none; display:flex; align-items:center; justify-content:space-between; padding:14px 16px; background:var(--surface); border:1px solid var(--border); border-radius:12px; transition:background-color 0.2s;">
+            <div style="display:flex; align-items:center; gap:10px;">
+              <h3 style="font-weight:600; font-size:0.9375rem; color:var(--text-primary); margin:0;">공식 플러그인</h3>
+              <span class="badge badge-success">13개</span>
+              <span style="font-size:0.75rem; color:var(--text-tertiary);">claude-plugins-official</span>
+            </div>
+            <svg class="details-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color:var(--text-tertiary); flex-shrink:0;" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg>
+          </summary>
+          <div style="border:1px solid var(--border); border-top:none; border-radius:0 0 12px 12px; padding:16px; display:flex; flex-direction:column; gap:10px; background:var(--surface);">
+
+            <!-- semgrep -->
+            <div style="border:1px solid var(--border-subtle); border-radius:8px; padding:14px; background:var(--bg);">
+              <div style="display:flex; align-items:center; gap:8px; margin-bottom:6px;">
+                <code style="font-size:0.8125rem; font-weight:600; color:var(--primary);">semgrep</code>
+                <span style="font-size:0.75rem; color:var(--text-secondary);">코드 보안 정적 분석</span>
+              </div>
+              <p style="font-size:0.8125rem; color:var(--text-tertiary); margin:0;">/setup-semgrep-plugin으로 설정. Semgrep 규칙 기반 취약점 탐지 — 코드 작성 시 보안 이슈를 실시간으로 잡아냅니다.</p>
+            </div>
+
+            <!-- security-guidance -->
+            <div style="border:1px solid var(--border-subtle); border-radius:8px; padding:14px; background:var(--bg);">
+              <div style="display:flex; align-items:center; gap:8px; margin-bottom:6px;">
+                <code style="font-size:0.8125rem; font-weight:600; color:var(--primary);">security-guidance</code>
+                <span style="font-size:0.75rem; color:var(--text-secondary);">보안 가이드라인</span>
+              </div>
+              <p style="font-size:0.8125rem; color:var(--text-tertiary); margin:0;">OWASP Top 10 기반 보안 권고. 코드 작성 시 자동으로 보안 베스트 프랙티스를 안내합니다.</p>
+            </div>
+
+            <!-- context7 -->
+            <div style="border:1px solid var(--border-subtle); border-radius:8px; padding:14px; background:var(--bg);">
+              <div style="display:flex; align-items:center; gap:8px; margin-bottom:6px;">
+                <code style="font-size:0.8125rem; font-weight:600; color:var(--primary);">context7</code>
+                <span style="font-size:0.75rem; color:var(--text-secondary);">최신 라이브러리 문서 조회</span>
+              </div>
+              <p style="font-size:0.8125rem; color:var(--text-tertiary); margin:0;">라이브러리/프레임워크 질문 시 자동으로 최신 공식 문서를 참조합니다. React, Next.js, Prisma 등 주요 패키지 지원.</p>
+            </div>
+
+            <!-- github -->
+            <div style="border:1px solid var(--border-subtle); border-radius:8px; padding:14px; background:var(--bg);">
+              <div style="display:flex; align-items:center; gap:8px; margin-bottom:6px;">
+                <code style="font-size:0.8125rem; font-weight:600; color:var(--primary);">github</code>
+                <span style="font-size:0.75rem; color:var(--text-secondary);">GitHub 이슈/PR 관리</span>
+              </div>
+              <p style="font-size:0.8125rem; color:var(--text-tertiary); margin:0;">이슈 생성/조회, PR 생성/리뷰, 코드 검색, 브랜치 관리를 Claude Code 안에서 직접 처리합니다.</p>
+            </div>
+
+            <!-- playwright -->
+            <div style="border:1px solid var(--border-subtle); border-radius:8px; padding:14px; background:var(--bg);">
+              <div style="display:flex; align-items:center; gap:8px; margin-bottom:6px;">
+                <code style="font-size:0.8125rem; font-weight:600; color:var(--primary);">playwright</code>
+                <span style="font-size:0.75rem; color:var(--text-secondary);">브라우저 자동화/테스트</span>
+              </div>
+              <p style="font-size:0.8125rem; color:var(--text-tertiary); margin:0;">브라우저 네비게이션, 스크린샷, 폼 입력, 네트워크 요청 모니터링 등 E2E 테스트를 자동화합니다.</p>
+            </div>
+
+            <!-- superpowers -->
+            <div style="border:1px solid var(--border-subtle); border-radius:8px; padding:14px; background:var(--bg);">
+              <div style="display:flex; align-items:center; gap:8px; margin-bottom:6px;">
+                <code style="font-size:0.8125rem; font-weight:600; color:var(--primary);">superpowers</code>
+                <span style="font-size:0.75rem; color:var(--text-secondary);">고급 개발 워크플로우 (14개 스킬)</span>
+              </div>
+              <div style="display:flex; flex-direction:column; gap:8px; margin-top:8px;">
+                <div>
+                  <p style="font-size:0.75rem; font-weight:600; color:var(--text-secondary); margin:0 0 4px 0;">계획/실행</p>
+                  <div style="display:flex; flex-wrap:wrap; gap:4px;">
+                    <code style="font-size:0.7rem; padding:2px 6px; background:var(--surface); border:1px solid var(--border); border-radius:4px; color:var(--text-secondary);">brainstorming</code>
+                    <code style="font-size:0.7rem; padding:2px 6px; background:var(--surface); border:1px solid var(--border); border-radius:4px; color:var(--text-secondary);">writing-plans</code>
+                    <code style="font-size:0.7rem; padding:2px 6px; background:var(--surface); border:1px solid var(--border); border-radius:4px; color:var(--text-secondary);">executing-plans</code>
+                  </div>
+                </div>
+                <div>
+                  <p style="font-size:0.75rem; font-weight:600; color:var(--text-secondary); margin:0 0 4px 0;">개발 품질</p>
+                  <div style="display:flex; flex-wrap:wrap; gap:4px;">
+                    <code style="font-size:0.7rem; padding:2px 6px; background:var(--surface); border:1px solid var(--border); border-radius:4px; color:var(--text-secondary);">test-driven-development</code>
+                    <code style="font-size:0.7rem; padding:2px 6px; background:var(--surface); border:1px solid var(--border); border-radius:4px; color:var(--text-secondary);">systematic-debugging</code>
+                    <code style="font-size:0.7rem; padding:2px 6px; background:var(--surface); border:1px solid var(--border); border-radius:4px; color:var(--text-secondary);">verification-before-completion</code>
+                  </div>
+                </div>
+                <div>
+                  <p style="font-size:0.75rem; font-weight:600; color:var(--text-secondary); margin:0 0 4px 0;">에이전트 협업</p>
+                  <div style="display:flex; flex-wrap:wrap; gap:4px;">
+                    <code style="font-size:0.7rem; padding:2px 6px; background:var(--surface); border:1px solid var(--border); border-radius:4px; color:var(--text-secondary);">dispatching-parallel-agents</code>
+                    <code style="font-size:0.7rem; padding:2px 6px; background:var(--surface); border:1px solid var(--border); border-radius:4px; color:var(--text-secondary);">subagent-driven-development</code>
+                    <code style="font-size:0.7rem; padding:2px 6px; background:var(--surface); border:1px solid var(--border); border-radius:4px; color:var(--text-secondary);">using-git-worktrees</code>
+                  </div>
+                </div>
+                <div>
+                  <p style="font-size:0.75rem; font-weight:600; color:var(--text-secondary); margin:0 0 4px 0;">리뷰/완료</p>
+                  <div style="display:flex; flex-wrap:wrap; gap:4px;">
+                    <code style="font-size:0.7rem; padding:2px 6px; background:var(--surface); border:1px solid var(--border); border-radius:4px; color:var(--text-secondary);">finishing-a-development-branch</code>
+                    <code style="font-size:0.7rem; padding:2px 6px; background:var(--surface); border:1px solid var(--border); border-radius:4px; color:var(--text-secondary);">receiving-code-review</code>
+                    <code style="font-size:0.7rem; padding:2px 6px; background:var(--surface); border:1px solid var(--border); border-radius:4px; color:var(--text-secondary);">requesting-code-review</code>
+                    <code style="font-size:0.7rem; padding:2px 6px; background:var(--surface); border:1px solid var(--border); border-radius:4px; color:var(--text-secondary);">writing-skills</code>
+                    <code style="font-size:0.7rem; padding:2px 6px; background:var(--surface); border:1px solid var(--border); border-radius:4px; color:var(--text-secondary);">using-superpowers</code>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- frontend-design -->
+            <div style="border:1px solid var(--border-subtle); border-radius:8px; padding:14px; background:var(--bg);">
+              <div style="display:flex; align-items:center; gap:8px; margin-bottom:6px;">
+                <code style="font-size:0.8125rem; font-weight:600; color:var(--primary);">frontend-design</code>
+                <span style="font-size:0.75rem; color:var(--text-secondary);">프론트엔드 UI 디자인</span>
+              </div>
+              <p style="font-size:0.8125rem; color:var(--text-tertiary); margin:0;">프로덕션급 UI 컴포넌트를 생성합니다. AI 특유의 밋밋한 디자인을 피하고 고품질 인터페이스를 만들어 냅니다.</p>
+            </div>
+
+            <!-- feature-dev -->
+            <div style="border:1px solid var(--border-subtle); border-radius:8px; padding:14px; background:var(--bg);">
+              <div style="display:flex; align-items:center; gap:8px; margin-bottom:6px;">
+                <code style="font-size:0.8125rem; font-weight:600; color:var(--primary);">feature-dev</code>
+                <span style="font-size:0.75rem; color:var(--text-secondary);">기능 개발 워크플로우</span>
+              </div>
+              <p style="font-size:0.8125rem; color:var(--text-tertiary); margin:0;">/feature-dev 명령으로 실행. <strong>code-architect</strong>(설계), <strong>code-explorer</strong>(탐색), <strong>code-reviewer</strong>(리뷰) 3개 전문 에이전트가 협력합니다.</p>
+            </div>
+
+            <!-- code-review -->
+            <div style="border:1px solid var(--border-subtle); border-radius:8px; padding:14px; background:var(--bg);">
+              <div style="display:flex; align-items:center; gap:8px; margin-bottom:6px;">
+                <code style="font-size:0.8125rem; font-weight:600; color:var(--primary);">code-review</code>
+                <span style="font-size:0.75rem; color:var(--text-secondary);">PR 코드 리뷰</span>
+              </div>
+              <p style="font-size:0.8125rem; color:var(--text-tertiary); margin:0;">/code-review [PR번호] 로 실행. 풀 리퀘스트를 자동으로 리뷰하고 개선점을 제안합니다.</p>
+            </div>
+
+            <!-- code-simplifier -->
+            <div style="border:1px solid var(--border-subtle); border-radius:8px; padding:14px; background:var(--bg);">
+              <div style="display:flex; align-items:center; gap:8px; margin-bottom:6px;">
+                <code style="font-size:0.8125rem; font-weight:600; color:var(--primary);">code-simplifier</code>
+                <span style="font-size:0.75rem; color:var(--text-secondary);">코드 간소화/리팩토링</span>
+              </div>
+              <p style="font-size:0.8125rem; color:var(--text-tertiary); margin:0;">변경된 코드를 자동 감지해 재사용성, 품질, 효율성 관점에서 리뷰하고 단순화합니다.</p>
+            </div>
+
+            <!-- ralph-loop -->
+            <div style="border:1px solid var(--border-subtle); border-radius:8px; padding:14px; background:var(--bg);">
+              <div style="display:flex; align-items:center; gap:8px; margin-bottom:6px;">
+                <code style="font-size:0.8125rem; font-weight:600; color:var(--primary);">ralph-loop</code>
+                <span style="font-size:0.75rem; color:var(--text-secondary);">반복 실행 루프</span>
+              </div>
+              <p style="font-size:0.8125rem; color:var(--text-tertiary); margin:0;">/ralph-loop으로 시작, /cancel-ralph로 중지. 작업이 완료될 때까지 자동으로 반복 실행합니다.</p>
+            </div>
+
+            <!-- commit-commands -->
+            <div style="border:1px solid var(--border-subtle); border-radius:8px; padding:14px; background:var(--bg);">
+              <div style="display:flex; align-items:center; gap:8px; margin-bottom:6px;">
+                <code style="font-size:0.8125rem; font-weight:600; color:var(--primary);">commit-commands</code>
+                <span style="font-size:0.75rem; color:var(--text-secondary);">커밋/푸시/PR 자동화</span>
+              </div>
+              <div style="display:flex; flex-wrap:wrap; gap:4px; margin-top:6px;">
+                <code style="font-size:0.7rem; padding:2px 6px; background:var(--surface); border:1px solid var(--border); border-radius:4px; color:var(--text-secondary);">/commit</code>
+                <code style="font-size:0.7rem; padding:2px 6px; background:var(--surface); border:1px solid var(--border); border-radius:4px; color:var(--text-secondary);">/commit-push-pr</code>
+                <code style="font-size:0.7rem; padding:2px 6px; background:var(--surface); border:1px solid var(--border); border-radius:4px; color:var(--text-secondary);">/clean_gone</code>
+              </div>
+              <p style="font-size:0.8125rem; color:var(--text-tertiary); margin:6px 0 0 0;">커밋, 커밋+푸시+PR 생성, 삭제된 원격 브랜치 정리를 한 명령으로 처리합니다.</p>
+            </div>
+
+            <!-- skill-creator -->
+            <div style="border:1px solid var(--border-subtle); border-radius:8px; padding:14px; background:var(--bg);">
+              <div style="display:flex; align-items:center; gap:8px; margin-bottom:6px;">
+                <code style="font-size:0.8125rem; font-weight:600; color:var(--primary);">skill-creator</code>
+                <span style="font-size:0.75rem; color:var(--text-secondary);">커스텀 스킬 생성</span>
+              </div>
+              <p style="font-size:0.8125rem; color:var(--text-tertiary); margin:0;">스킬 생성/수정, eval 실행, 성능 벤치마크. analyzer, comparator, grader 에이전트가 스킬 품질을 검증합니다.</p>
+            </div>
+
           </div>
-          <div class="card" style="overflow:hidden;">
-            <table class="data-table">
-              <thead><tr><th>플러그인</th><th>설명</th></tr></thead>
-              <tbody>
-                <tr><td><code>semgrep</code></td><td style="color:var(--text-secondary);">코드 보안 정적 분석</td></tr>
-                <tr><td><code>security-guidance</code></td><td style="color:var(--text-secondary);">보안 가이드라인 제공</td></tr>
-                <tr><td><code>frontend-design</code></td><td style="color:var(--text-secondary);">프론트엔드 UI 디자인 전문 에이전트</td></tr>
-                <tr><td><code>context7</code></td><td style="color:var(--text-secondary);">최신 라이브러리 문서 실시간 조회</td></tr>
-                <tr><td><code>code-review</code></td><td style="color:var(--text-secondary);">PR 코드 리뷰 자동화</td></tr>
-                <tr><td><code>superpowers</code></td><td style="color:var(--text-secondary);">고급 에이전트 확장 기능</td></tr>
-                <tr><td><code>github</code></td><td style="color:var(--text-secondary);">GitHub 이슈/PR 관리 통합</td></tr>
-                <tr><td><code>feature-dev</code></td><td style="color:var(--text-secondary);">기능 개발 전체 워크플로우</td></tr>
-                <tr><td><code>code-simplifier</code></td><td style="color:var(--text-secondary);">코드 간소화 및 리팩토링</td></tr>
-                <tr><td><code>ralph-loop</code></td><td style="color:var(--text-secondary);">반복 실행 루프 (ralph 모드)</td></tr>
-                <tr><td><code>playwright</code></td><td style="color:var(--text-secondary);">브라우저 자동화 및 E2E 테스트</td></tr>
-                <tr><td><code>commit-commands</code></td><td style="color:var(--text-secondary);">커밋/푸시/PR 자동화 명령</td></tr>
-                <tr><td><code>skill-creator</code></td><td style="color:var(--text-secondary);">커스텀 스킬 생성 도구</td></tr>
-              </tbody>
-            </table>
+        </details>
+
+        <!-- 개발 플러그인 접이식 카드 -->
+        <details style="margin-bottom:12px;">
+          <summary style="cursor:pointer; list-style:none; display:flex; align-items:center; justify-content:space-between; padding:14px 16px; background:var(--surface); border:1px solid var(--border); border-radius:12px; transition:background-color 0.2s;">
+            <div style="display:flex; align-items:center; gap:10px;">
+              <h3 style="font-weight:600; font-size:0.9375rem; color:var(--text-primary); margin:0;">개발 플러그인</h3>
+              <span class="badge badge-info">3개</span>
+              <span style="font-size:0.75rem; color:var(--text-tertiary);">claude-code-plugins</span>
+            </div>
+            <svg class="details-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color:var(--text-tertiary); flex-shrink:0;" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg>
+          </summary>
+          <div style="border:1px solid var(--border); border-top:none; border-radius:0 0 12px 12px; padding:16px; display:flex; flex-direction:column; gap:10px; background:var(--surface);">
+
+            <!-- agent-sdk-dev -->
+            <div style="border:1px solid var(--border-subtle); border-radius:8px; padding:14px; background:var(--bg);">
+              <div style="display:flex; align-items:center; gap:8px; margin-bottom:6px;">
+                <code style="font-size:0.8125rem; font-weight:600; color:var(--primary);">agent-sdk-dev</code>
+                <span style="font-size:0.75rem; color:var(--text-secondary);">Claude Agent SDK 개발 도구</span>
+              </div>
+              <p style="font-size:0.8125rem; color:var(--text-tertiary); margin:0;">/new-sdk-app으로 새 SDK 앱을 스캐폴딩합니다. Python/TypeScript 검증 에이전트가 포함되어 있습니다.</p>
+            </div>
+
+            <!-- claude-opus-4-5-migration -->
+            <div style="border:1px solid var(--border-subtle); border-radius:8px; padding:14px; background:var(--bg);">
+              <div style="display:flex; align-items:center; gap:8px; margin-bottom:6px;">
+                <code style="font-size:0.8125rem; font-weight:600; color:var(--primary);">claude-opus-4-5-migration</code>
+                <span style="font-size:0.75rem; color:var(--text-secondary);">Opus 4.5 마이그레이션</span>
+              </div>
+              <p style="font-size:0.8125rem; color:var(--text-tertiary); margin:0;">기존 코드/프롬프트를 Opus 4.5 호환 방식으로 자동 변환합니다.</p>
+            </div>
+
+            <!-- plugin-dev -->
+            <div style="border:1px solid var(--border-subtle); border-radius:8px; padding:14px; background:var(--bg);">
+              <div style="display:flex; align-items:center; gap:8px; margin-bottom:6px;">
+                <code style="font-size:0.8125rem; font-weight:600; color:var(--primary);">plugin-dev</code>
+                <span style="font-size:0.75rem; color:var(--text-secondary);">플러그인 개발 도구</span>
+              </div>
+              <p style="font-size:0.8125rem; color:var(--text-tertiary); margin:0;">/create-plugin으로 플러그인 스캐폴딩. skill, agent, hook, command 개발 가이드를 제공합니다.</p>
+            </div>
+
           </div>
+        </details>
+
+        <!-- 서드파티 플러그인 -->
+        <div style="display:flex; align-items:center; gap:10px; margin-bottom:12px; padding:4px 0;">
+          <h3 style="font-weight:600; font-size:0.9375rem; color:var(--text-primary); margin:0;">서드파티 플러그인</h3>
+          <span class="badge badge-primary">3개</span>
         </div>
 
-        <div style="margin-bottom:20px;">
-          <div style="display:flex; align-items:center; gap:8px; margin-bottom:12px;">
-            <h3 style="font-weight:600; font-size:0.9375rem; color:var(--text-primary); margin:0;">개발 플러그인</h3>
-            <span class="badge badge-info">3개</span>
-            <span style="font-size:0.75rem; color:var(--text-tertiary);">claude-code-plugins</span>
+        <!-- oh-my-claudecode 카드 -->
+        <details style="margin-bottom:12px;">
+          <summary style="cursor:pointer; list-style:none; display:flex; align-items:center; justify-content:space-between; padding:14px 16px; background:var(--surface); border:1px solid var(--border); border-radius:12px; transition:background-color 0.2s;">
+            <div style="display:flex; align-items:center; gap:10px;">
+              <code style="font-size:0.875rem; font-weight:600; color:var(--primary);">oh-my-claudecode</code>
+              <span style="font-size:0.8125rem; color:var(--text-secondary);">멀티 에이전트 오케스트레이션 레이어</span>
+            </div>
+            <svg class="details-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color:var(--text-tertiary); flex-shrink:0;" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg>
+          </summary>
+          <div style="border:1px solid var(--border); border-top:none; border-radius:0 0 12px 12px; padding:16px; background:var(--surface);">
+            <div style="display:flex; flex-direction:column; gap:10px;">
+              <div style="border:1px solid var(--border-subtle); border-radius:8px; padding:14px; background:var(--bg);">
+                <p style="font-size:0.75rem; font-weight:600; color:var(--text-secondary); margin:0 0 6px 0;">핵심 기능</p>
+                <ul style="margin:0; padding-left:16px; display:flex; flex-direction:column; gap:4px;">
+                  <li style="font-size:0.8125rem; color:var(--text-tertiary);">80+ 스킬, 7개 라이프사이클 훅</li>
+                  <li style="font-size:0.8125rem; color:var(--text-tertiary);">HUD 상태 표시줄로 에이전트 상태 시각화</li>
+                </ul>
+              </div>
+              <div style="border:1px solid var(--border-subtle); border-radius:8px; padding:14px; background:var(--bg);">
+                <p style="font-size:0.75rem; font-weight:600; color:var(--text-secondary); margin:0 0 6px 0;">Tier-0 워크플로우</p>
+                <div style="display:flex; flex-wrap:wrap; gap:4px;">
+                  <code style="font-size:0.7rem; padding:2px 6px; background:var(--surface); border:1px solid var(--border); border-radius:4px; color:var(--text-secondary);">autopilot</code>
+                  <code style="font-size:0.7rem; padding:2px 6px; background:var(--surface); border:1px solid var(--border); border-radius:4px; color:var(--text-secondary);">ralph</code>
+                  <code style="font-size:0.7rem; padding:2px 6px; background:var(--surface); border:1px solid var(--border); border-radius:4px; color:var(--text-secondary);">ultrawork</code>
+                  <code style="font-size:0.7rem; padding:2px 6px; background:var(--surface); border:1px solid var(--border); border-radius:4px; color:var(--text-secondary);">team</code>
+                  <code style="font-size:0.7rem; padding:2px 6px; background:var(--surface); border:1px solid var(--border); border-radius:4px; color:var(--text-secondary);">ralplan</code>
+                </div>
+              </div>
+              <div class="callout callout-info" style="margin:0;">
+                <span style="font-size:0.875rem; line-height:1;">i</span>
+                <div style="font-size:0.8125rem;">설치 방법, 훅 설정, 스킬 목록은 각각 <strong>섹션 5(OMC 설치)</strong>, <strong>섹션 8(훅)</strong>, <strong>섹션 9(스킬)</strong>에서 자세히 다룹니다.</div>
+              </div>
+            </div>
           </div>
-          <div class="card" style="overflow:hidden;">
-            <table class="data-table">
-              <thead><tr><th>플러그인</th><th>설명</th></tr></thead>
-              <tbody>
-                <tr><td><code>agent-sdk-dev</code></td><td style="color:var(--text-secondary);">Claude Agent SDK 개발 전문 도구</td></tr>
-                <tr><td><code>claude-opus-4-5-migration</code></td><td style="color:var(--text-secondary);">Opus 4.5 마이그레이션 가이드</td></tr>
-                <tr><td><code>plugin-dev</code></td><td style="color:var(--text-secondary);">플러그인 직접 개발 도구</td></tr>
-              </tbody>
-            </table>
-          </div>
-        </div>
+        </details>
 
-        <div style="margin-bottom:20px;">
-          <div style="display:flex; align-items:center; gap:8px; margin-bottom:12px;">
-            <h3 style="font-weight:600; font-size:0.9375rem; color:var(--text-primary); margin:0;">서드파티 플러그인</h3>
-            <span class="badge badge-primary">3개</span>
+        <!-- impeccable 카드 -->
+        <details style="margin-bottom:12px;">
+          <summary style="cursor:pointer; list-style:none; display:flex; align-items:center; justify-content:space-between; padding:14px 16px; background:var(--surface); border:1px solid var(--border); border-radius:12px; transition:background-color 0.2s;">
+            <div style="display:flex; align-items:center; gap:10px;">
+              <code style="font-size:0.875rem; font-weight:600; color:var(--primary);">impeccable</code>
+              <span style="font-size:0.8125rem; color:var(--text-secondary);">21개 UI/UX 디자인 스킬</span>
+            </div>
+            <svg class="details-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color:var(--text-tertiary); flex-shrink:0;" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg>
+          </summary>
+          <div style="border:1px solid var(--border); border-top:none; border-radius:0 0 12px 12px; padding:16px; background:var(--surface);">
+            <div style="display:flex; flex-direction:column; gap:10px;">
+
+              <div style="border:1px solid var(--border-subtle); border-radius:8px; padding:14px; background:var(--bg);">
+                <p style="font-size:0.75rem; font-weight:600; color:var(--text-secondary); margin:0 0 6px 0;">시작하기</p>
+                <p style="font-size:0.8125rem; color:var(--text-tertiary); margin:0;"><code>/teach-impeccable</code> — 프로젝트 디자인 컨텍스트를 수집하고 <code>.impeccable.md</code>를 생성합니다. 최초 1회만 실행하면 됩니다.</p>
+              </div>
+
+              <div style="border:1px solid var(--border-subtle); border-radius:8px; padding:14px; background:var(--bg);">
+                <p style="font-size:0.75rem; font-weight:600; color:var(--text-secondary); margin:0 0 6px 0;">진단</p>
+                <div style="display:flex; flex-wrap:wrap; gap:4px; margin-bottom:6px;">
+                  <code style="font-size:0.7rem; padding:2px 6px; background:var(--surface); border:1px solid var(--border); border-radius:4px; color:var(--text-secondary);">audit</code>
+                  <code style="font-size:0.7rem; padding:2px 6px; background:var(--surface); border:1px solid var(--border); border-radius:4px; color:var(--text-secondary);">critique</code>
+                  <code style="font-size:0.7rem; padding:2px 6px; background:var(--surface); border:1px solid var(--border); border-radius:4px; color:var(--text-secondary);">normalize</code>
+                </div>
+                <p style="font-size:0.75rem; color:var(--text-tertiary); margin:0;">접근성/성능/테마 점검, UX 평가, 디자인 시스템 정합성 검토</p>
+              </div>
+
+              <div style="border:1px solid var(--border-subtle); border-radius:8px; padding:14px; background:var(--bg);">
+                <p style="font-size:0.75rem; font-weight:600; color:var(--text-secondary); margin:0 0 6px 0;">향상</p>
+                <div style="display:flex; flex-wrap:wrap; gap:4px; margin-bottom:6px;">
+                  <code style="font-size:0.7rem; padding:2px 6px; background:var(--surface); border:1px solid var(--border); border-radius:4px; color:var(--text-secondary);">animate</code>
+                  <code style="font-size:0.7rem; padding:2px 6px; background:var(--surface); border:1px solid var(--border); border-radius:4px; color:var(--text-secondary);">delight</code>
+                  <code style="font-size:0.7rem; padding:2px 6px; background:var(--surface); border:1px solid var(--border); border-radius:4px; color:var(--text-secondary);">colorize</code>
+                  <code style="font-size:0.7rem; padding:2px 6px; background:var(--surface); border:1px solid var(--border); border-radius:4px; color:var(--text-secondary);">bolder</code>
+                  <code style="font-size:0.7rem; padding:2px 6px; background:var(--surface); border:1px solid var(--border); border-radius:4px; color:var(--text-secondary);">overdrive</code>
+                </div>
+                <p style="font-size:0.75rem; color:var(--text-tertiary); margin:0;">모션 추가, 인터랙션 강화, 색상 강화, 임팩트 증가, 고급 시각 효과</p>
+              </div>
+
+              <div style="border:1px solid var(--border-subtle); border-radius:8px; padding:14px; background:var(--bg);">
+                <p style="font-size:0.75rem; font-weight:600; color:var(--text-secondary); margin:0 0 6px 0;">정제</p>
+                <div style="display:flex; flex-wrap:wrap; gap:4px; margin-bottom:6px;">
+                  <code style="font-size:0.7rem; padding:2px 6px; background:var(--surface); border:1px solid var(--border); border-radius:4px; color:var(--text-secondary);">polish</code>
+                  <code style="font-size:0.7rem; padding:2px 6px; background:var(--surface); border:1px solid var(--border); border-radius:4px; color:var(--text-secondary);">quieter</code>
+                  <code style="font-size:0.7rem; padding:2px 6px; background:var(--surface); border:1px solid var(--border); border-radius:4px; color:var(--text-secondary);">distill</code>
+                  <code style="font-size:0.7rem; padding:2px 6px; background:var(--surface); border:1px solid var(--border); border-radius:4px; color:var(--text-secondary);">clarify</code>
+                  <code style="font-size:0.7rem; padding:2px 6px; background:var(--surface); border:1px solid var(--border); border-radius:4px; color:var(--text-secondary);">typeset</code>
+                </div>
+                <p style="font-size:0.75rem; color:var(--text-tertiary); margin:0;">마무리 품질, 과도한 디자인 완화, 단순화, UX 카피 개선, 타이포그래피</p>
+              </div>
+
+              <div style="border:1px solid var(--border-subtle); border-radius:8px; padding:14px; background:var(--bg);">
+                <p style="font-size:0.75rem; font-weight:600; color:var(--text-secondary); margin:0 0 6px 0;">구조</p>
+                <div style="display:flex; flex-wrap:wrap; gap:4px; margin-bottom:6px;">
+                  <code style="font-size:0.7rem; padding:2px 6px; background:var(--surface); border:1px solid var(--border); border-radius:4px; color:var(--text-secondary);">arrange</code>
+                  <code style="font-size:0.7rem; padding:2px 6px; background:var(--surface); border:1px solid var(--border); border-radius:4px; color:var(--text-secondary);">adapt</code>
+                  <code style="font-size:0.7rem; padding:2px 6px; background:var(--surface); border:1px solid var(--border); border-radius:4px; color:var(--text-secondary);">extract</code>
+                  <code style="font-size:0.7rem; padding:2px 6px; background:var(--surface); border:1px solid var(--border); border-radius:4px; color:var(--text-secondary);">harden</code>
+                </div>
+                <p style="font-size:0.75rem; color:var(--text-tertiary); margin:0;">레이아웃/여백, 반응형 최적화, 컴포넌트 추출, 에러 핸들링/i18n 강화</p>
+              </div>
+
+              <div style="border:1px solid var(--border-subtle); border-radius:8px; padding:14px; background:var(--bg);">
+                <p style="font-size:0.75rem; font-weight:600; color:var(--text-secondary); margin:0 0 6px 0;">생성</p>
+                <div style="display:flex; flex-wrap:wrap; gap:4px; margin-bottom:6px;">
+                  <code style="font-size:0.7rem; padding:2px 6px; background:var(--surface); border:1px solid var(--border); border-radius:4px; color:var(--text-secondary);">frontend-design</code>
+                  <code style="font-size:0.7rem; padding:2px 6px; background:var(--surface); border:1px solid var(--border); border-radius:4px; color:var(--text-secondary);">onboard</code>
+                  <code style="font-size:0.7rem; padding:2px 6px; background:var(--surface); border:1px solid var(--border); border-radius:4px; color:var(--text-secondary);">optimize</code>
+                </div>
+                <p style="font-size:0.75rem; color:var(--text-tertiary); margin:0;">UI 컴포넌트 생성, 온보딩 플로우 설계, 성능 최적화</p>
+              </div>
+
+            </div>
           </div>
-          <div class="card" style="overflow:hidden;">
-            <table class="data-table">
-              <thead><tr><th>플러그인</th><th>설명</th></tr></thead>
-              <tbody>
-                <tr><td><code>oh-my-claudecode</code></td><td style="color:var(--text-secondary);">멀티 에이전트 오케스트레이션 (OMC 핵심)</td></tr>
-                <tr><td><code>impeccable</code></td><td style="color:var(--text-secondary);">UI/UX 디자인 시스템 (21개 디자인 스킬)</td></tr>
-                <tr><td><code>vercel-plugin</code></td><td style="color:var(--text-secondary);">Vercel 배포 및 Edge 함수 통합</td></tr>
-              </tbody>
-            </table>
+        </details>
+
+        <!-- vercel-plugin 카드 -->
+        <details style="margin-bottom:20px;">
+          <summary style="cursor:pointer; list-style:none; display:flex; align-items:center; justify-content:space-between; padding:14px 16px; background:var(--surface); border:1px solid var(--border); border-radius:12px; transition:background-color 0.2s;">
+            <div style="display:flex; align-items:center; gap:10px;">
+              <code style="font-size:0.875rem; font-weight:600; color:var(--primary);">vercel-plugin</code>
+              <span style="font-size:0.8125rem; color:var(--text-secondary);">20+ Vercel 개발 스킬</span>
+            </div>
+            <svg class="details-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color:var(--text-tertiary); flex-shrink:0;" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg>
+          </summary>
+          <div style="border:1px solid var(--border); border-top:none; border-radius:0 0 12px 12px; padding:16px; background:var(--surface);">
+            <div style="display:flex; flex-direction:column; gap:10px;">
+
+              <div style="border:1px solid var(--border-subtle); border-radius:8px; padding:14px; background:var(--bg);">
+                <p style="font-size:0.75rem; font-weight:600; color:var(--text-secondary); margin:0 0 6px 0;">배포</p>
+                <div style="display:flex; flex-wrap:wrap; gap:4px;">
+                  <code style="font-size:0.7rem; padding:2px 6px; background:var(--surface); border:1px solid var(--border); border-radius:4px; color:var(--text-secondary);">/deploy</code>
+                  <code style="font-size:0.7rem; padding:2px 6px; background:var(--surface); border:1px solid var(--border); border-radius:4px; color:var(--text-secondary);">/status</code>
+                  <code style="font-size:0.7rem; padding:2px 6px; background:var(--surface); border:1px solid var(--border); border-radius:4px; color:var(--text-secondary);">deployments-cicd</code>
+                  <code style="font-size:0.7rem; padding:2px 6px; background:var(--surface); border:1px solid var(--border); border-radius:4px; color:var(--text-secondary);">vercel-cli</code>
+                </div>
+              </div>
+
+              <div style="border:1px solid var(--border-subtle); border-radius:8px; padding:14px; background:var(--bg);">
+                <p style="font-size:0.75rem; font-weight:600; color:var(--text-secondary); margin:0 0 6px 0;">환경</p>
+                <div style="display:flex; flex-wrap:wrap; gap:4px;">
+                  <code style="font-size:0.7rem; padding:2px 6px; background:var(--surface); border:1px solid var(--border); border-radius:4px; color:var(--text-secondary);">/env</code>
+                  <code style="font-size:0.7rem; padding:2px 6px; background:var(--surface); border:1px solid var(--border); border-radius:4px; color:var(--text-secondary);">/bootstrap</code>
+                </div>
+                <p style="font-size:0.75rem; color:var(--text-tertiary); margin:6px 0 0 0;">환경변수 관리, 프로젝트 초기 설정</p>
+              </div>
+
+              <div style="border:1px solid var(--border-subtle); border-radius:8px; padding:14px; background:var(--bg);">
+                <p style="font-size:0.75rem; font-weight:600; color:var(--text-secondary); margin:0 0 6px 0;">프레임워크</p>
+                <div style="display:flex; flex-wrap:wrap; gap:4px;">
+                  <code style="font-size:0.7rem; padding:2px 6px; background:var(--surface); border:1px solid var(--border); border-radius:4px; color:var(--text-secondary);">nextjs</code>
+                  <code style="font-size:0.7rem; padding:2px 6px; background:var(--surface); border:1px solid var(--border); border-radius:4px; color:var(--text-secondary);">shadcn</code>
+                  <code style="font-size:0.7rem; padding:2px 6px; background:var(--surface); border:1px solid var(--border); border-radius:4px; color:var(--text-secondary);">turbopack</code>
+                  <code style="font-size:0.7rem; padding:2px 6px; background:var(--surface); border:1px solid var(--border); border-radius:4px; color:var(--text-secondary);">react-best-practices</code>
+                </div>
+                <p style="font-size:0.75rem; color:var(--text-tertiary); margin:6px 0 0 0;">Next.js App Router, shadcn UI 컴포넌트, Turbopack, React 베스트 프랙티스</p>
+              </div>
+
+              <div style="border:1px solid var(--border-subtle); border-radius:8px; padding:14px; background:var(--bg);">
+                <p style="font-size:0.75rem; font-weight:600; color:var(--text-secondary); margin:0 0 6px 0;">인프라</p>
+                <div style="display:flex; flex-wrap:wrap; gap:4px;">
+                  <code style="font-size:0.7rem; padding:2px 6px; background:var(--surface); border:1px solid var(--border); border-radius:4px; color:var(--text-secondary);">vercel-functions</code>
+                  <code style="font-size:0.7rem; padding:2px 6px; background:var(--surface); border:1px solid var(--border); border-radius:4px; color:var(--text-secondary);">routing-middleware</code>
+                  <code style="font-size:0.7rem; padding:2px 6px; background:var(--surface); border:1px solid var(--border); border-radius:4px; color:var(--text-secondary);">runtime-cache</code>
+                  <code style="font-size:0.7rem; padding:2px 6px; background:var(--surface); border:1px solid var(--border); border-radius:4px; color:var(--text-secondary);">vercel-storage</code>
+                </div>
+              </div>
+
+              <div style="border:1px solid var(--border-subtle); border-radius:8px; padding:14px; background:var(--bg);">
+                <p style="font-size:0.75rem; font-weight:600; color:var(--text-secondary); margin:0 0 6px 0;">AI</p>
+                <div style="display:flex; flex-wrap:wrap; gap:4px;">
+                  <code style="font-size:0.7rem; padding:2px 6px; background:var(--surface); border:1px solid var(--border); border-radius:4px; color:var(--text-secondary);">ai-sdk</code>
+                  <code style="font-size:0.7rem; padding:2px 6px; background:var(--surface); border:1px solid var(--border); border-radius:4px; color:var(--text-secondary);">ai-gateway</code>
+                  <code style="font-size:0.7rem; padding:2px 6px; background:var(--surface); border:1px solid var(--border); border-radius:4px; color:var(--text-secondary);">chat-sdk</code>
+                </div>
+                <p style="font-size:0.75rem; color:var(--text-tertiary); margin:6px 0 0 0;">AI SDK, 모델 라우팅 게이트웨이, 멀티플랫폼 챗봇 SDK</p>
+              </div>
+
+              <div style="border:1px solid var(--border-subtle); border-radius:8px; padding:14px; background:var(--bg);">
+                <p style="font-size:0.75rem; font-weight:600; color:var(--text-secondary); margin:0 0 6px 0;">기타</p>
+                <div style="display:flex; flex-wrap:wrap; gap:4px;">
+                  <code style="font-size:0.7rem; padding:2px 6px; background:var(--surface); border:1px solid var(--border); border-radius:4px; color:var(--text-secondary);">auth</code>
+                  <code style="font-size:0.7rem; padding:2px 6px; background:var(--surface); border:1px solid var(--border); border-radius:4px; color:var(--text-secondary);">marketplace</code>
+                  <code style="font-size:0.7rem; padding:2px 6px; background:var(--surface); border:1px solid var(--border); border-radius:4px; color:var(--text-secondary);">workflow</code>
+                  <code style="font-size:0.7rem; padding:2px 6px; background:var(--surface); border:1px solid var(--border); border-radius:4px; color:var(--text-secondary);">vercel-sandbox</code>
+                </div>
+                <p style="font-size:0.75rem; color:var(--text-tertiary); margin:6px 0 0 0;">인증, 마켓플레이스 통합, 내구성 워크플로우, 샌드박스 환경</p>
+              </div>
+
+            </div>
           </div>
-        </div>
+        </details>
 
         <div class="callout callout-info" style="margin-bottom:16px;">
-          <span class="callout-icon">ℹ️</span>
+          <span style="font-size:0.875rem; line-height:1; font-weight:600; flex-shrink:0;">i</span>
           <div><strong>설치 방법:</strong> Claude Code 내에서 <code>/install-plugin [플러그인명]</code> 명령으로 설치하거나, settings.json의 <code>enabledPlugins</code> 배열에 직접 추가할 수 있습니다.</div>
         </div>
 
